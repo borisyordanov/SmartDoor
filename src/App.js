@@ -135,7 +135,7 @@ class App extends Component {
 						justify="center"
 					>
 						{itemList.map((item, i) => (
-							<Grid item xs={6} sm={4} md={3} key={`item-${i}`}>
+							<Grid item xs={12} sm={6} md={4} lg={3} key={`item-${i}`}>
 								<ItemCard
 									details={item}
 									startScan={this.startScan}
