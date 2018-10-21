@@ -46,7 +46,7 @@ class App extends Component {
 	state = {
 		showSnackbar: false,
 		snackbarMsg: '',
-		showModal: true,
+		showAddItemModal: false,
 		newItem: {
 			name: '',
 			description: ''
@@ -105,7 +105,7 @@ class App extends Component {
 	};
 
 	toggleModal = () => {
-		this.setState(state => ({ showModal: !state.showModal }));
+		this.setState(state => ({ showAddItemModal: !state.showAddItemModal }));
 	};
 
 	saveItem = () => {
@@ -117,13 +117,13 @@ class App extends Component {
 			img: 'https://via.placeholder.com/400x225'
 		});
 		this.setState({
-			showModal: false,
+			showAddItemModal: false,
 			itemList
 		});
 	};
 	render() {
 		const { classes } = this.props;
-		const { itemList, showSnackbar, snackbarMsg, showModal } = this.state;
+		const { itemList, showSnackbar, snackbarMsg, showAddItemModal } = this.state;
 
 		return (
 			<div className={classes.root}>
@@ -158,7 +158,7 @@ class App extends Component {
 				<Modal
 					aria-labelledby="simple-modal-title"
 					aria-describedby="simple-modal-description"
-					open={showModal}
+					open={showAddItemModal}
 					onClose={this.toggleModal}
 				>
 					<div className={classes.modal}>
