@@ -7,7 +7,8 @@ import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import AccountCircle from '@material-ui/icons/AccountCircle';
-
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
 const styles = {
 	root: {
 		flexGrow: 1
@@ -34,9 +35,8 @@ class Header extends Component {
 	handleClose = () => {
 		this.setState({ anchorEl: null });
 	};
-
 	render() {
-		const { classes } = this.props;
+		const { classes, selectedMenuTab, handleNavMenuChange } = this.props;
 		const { auth, anchorEl } = this.state;
 		const open = Boolean(anchorEl);
 		return (
@@ -46,6 +46,14 @@ class Header extends Component {
 						<Typography variant="h6" color="inherit" noWrap>
 							SmartDoor
 						</Typography>
+						<Tabs
+							value={selectedMenuTab}
+							onChange={handleNavMenuChange}
+							indicatorColor="secondary"
+						>
+							<Tab label="Items" />
+							<Tab label="Groups" />
+						</Tabs>
 						{auth && (
 							<div>
 								<IconButton

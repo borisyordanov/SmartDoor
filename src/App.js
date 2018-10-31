@@ -8,9 +8,12 @@ import CloseIcon from '@material-ui/icons/Close';
 import Header from './components/Header';
 import ItemCard from './components/ItemCard';
 import AddIcon from '@material-ui/icons/Add';
+import PlaylistAdd from '@material-ui/icons/PlaylistAdd';
 import Modal from '@material-ui/core/Modal';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
+import green from '@material-ui/core/colors/green';
+import Autocomplete from './components/Autocomplete';
 
 const styles = theme => ({
 	close: {
@@ -36,9 +39,18 @@ const styles = theme => ({
 	},
 	fabAddBtn: {
 		margin: 0,
-		right: 20,
-		bottom: 20,
+
 		position: 'fixed'
+	},
+	fabItemAddBtn: {
+		right: 80,
+		bottom: 20,
+		backgroundColor: green[500],
+		color: 'white'
+	},
+	fabGroupAddBtn: {
+		right: 20,
+		bottom: 20
 	}
 });
 
@@ -47,27 +59,52 @@ class App extends Component {
 		showSnackbar: false,
 		snackbarMsg: '',
 		showAddItemModal: false,
+		showAddGroupModal: false,
+		selectedMenuTab: 0,
 		newItem: {
 			name: '',
 			description: ''
 		},
-		itemList: [
+		groupList: [
 			{
-				title: 'Test 1',
+				title: 'Group 1',
 				date: 1453766400000,
 				img: 'https://via.placeholder.com/400x225',
 				description:
 					'Lorem ipsum dolor sit amet, id sit fugit oporteat perfecto. Putant ornatus usu cu, munere legimus explicari per no. Eum inani graece similique id, putant perpetua aliquando an eam. Quem solum id pro. Errem consequuntur id his.'
 			},
 			{
-				title: 'Test 2',
+				title: 'Group 2',
 				date: 1485388800000,
 				img: 'https://via.placeholder.com/400x225',
 				description:
 					'Lorem ipsum dolor sit amet, id sit fugit oporteat perfecto. Putant ornatus usu cu, munere legimus explicari per no. Eum inani graece similique id, putant perpetua aliquando an eam. Quem solum id pro. Errem consequuntur id his.'
 			},
 			{
-				title: 'Test 3',
+				title: 'Group 3',
+				date: 1516924800000,
+				img: 'https://via.placeholder.com/400x225',
+				description:
+					'Lorem ipsum dolor sit amet, id sit fugit oporteat perfecto. Putant ornatus usu cu, munere legimus explicari per no. Eum inani graece similique id, putant perpetua aliquando an eam. Quem solum id pro. Errem consequuntur id his.'
+			}
+		],
+		itemList: [
+			{
+				title: 'Item 1',
+				date: 1453766400000,
+				img: 'https://via.placeholder.com/400x225',
+				description:
+					'Lorem ipsum dolor sit amet, id sit fugit oporteat perfecto. Putant ornatus usu cu, munere legimus explicari per no. Eum inani graece similique id, putant perpetua aliquando an eam. Quem solum id pro. Errem consequuntur id his.'
+			},
+			{
+				title: 'Item 2',
+				date: 1485388800000,
+				img: 'https://via.placeholder.com/400x225',
+				description:
+					'Lorem ipsum dolor sit amet, id sit fugit oporteat perfecto. Putant ornatus usu cu, munere legimus explicari per no. Eum inani graece similique id, putant perpetua aliquando an eam. Quem solum id pro. Errem consequuntur id his.'
+			},
+			{
+				title: 'Item 3',
 				date: 1516924800000,
 				img: 'https://via.placeholder.com/400x225',
 				description:
@@ -103,14 +140,24 @@ class App extends Component {
 
 		this.setState({ showSnackbar: false, snackbarMsg: '' });
 	};
-
-	toggleModal = () => {
-		this.setState(state => ({ showAddItemModal: !state.showAddItemModal }));
+	handleNavMenuChange = (event, selectedMenuTab) => {
+		this.setState({ selectedMenuTab });
+	};
+	toggleModal = type => () => {
+		if (type === 'item') {
+			this.setState(state => ({
+				showAddItemModal: !state.showAddItemModal
+			}));
+		} else {
+			this.setState(state => ({
+				showAddGroupModal: !state.showAddGroupModal
+			}));
+		}
 	};
 
 	saveItem = () => {
-		const itemList = this.state.itemList.slice();
-		itemList.push({
+		const groupList = this.state.groupList.slice();
+		groupList.push({
 			title: this.newItemName.current.value,
 			description: this.newItemDescription.current.value,
 			date: Date.now(),
@@ -118,89 +165,162 @@ class App extends Component {
 		});
 		this.setState({
 			showAddItemModal: false,
-			itemList
+			groupList
 		});
 	};
 	render() {
 		const { classes } = this.props;
-		const { itemList, showSnackbar, snackbarMsg, showAddItemModal } = this.state;
+		const {
+			itemList,
+			groupList,
+			showSnackbar,
+			snackbarMsg,
+			showAddItemModal,
+			showAddGroupModal,
+			selectedMenuTab
+		} = this.state;
 
 		return (
 			<div className={classes.root}>
-				<Header />
+				<Header
+					handleNavMenuChange={this.handleNavMenuChange}
+					selectedMenuTab={selectedMenuTab}
+				/>
 				<div className={classes.container}>
-					<Grid
-						container
-						spacing={24}
-						justify="center"
-					>
-						{itemList.map((item, i) => (
-							<Grid item xs={12} sm={6} md={4} lg={3} key={`item-${i}`}>
-								<ItemCard
-									details={item}
-									startScan={this.startScan}
-									pauseScan={this.pauseScan}
-									stopScan={this.stopScan}
-								/>
-							</Grid>
-						))}
+					<Grid container spacing={24} justify="center">
+						{selectedMenuTab === 0
+							? itemList.map((item, i) => (
+									<Grid
+										item
+										xs={12}
+										sm={6}
+										md={4}
+										lg={3}
+										key={`item-${i}`}
+									>
+										<ItemCard
+											details={item}
+											startScan={this.startScan}
+											pauseScan={this.pauseScan}
+											stopScan={this.stopScan}
+										/>
+									</Grid>
+							  ))
+							: groupList.map((item, i) => (
+									<Grid
+										item
+										xs={12}
+										sm={6}
+										md={4}
+										lg={3}
+										key={`item-${i}`}
+									>
+										<ItemCard
+											details={item}
+											startScan={this.startScan}
+											pauseScan={this.pauseScan}
+											stopScan={this.stopScan}
+										/>
+									</Grid>
+							  ))}
 					</Grid>
 				</div>
 				<Button
-					className={classes.fabAddBtn}
+					className={[classes.fabAddBtn, classes.fabItemAddBtn].join(
+						' '
+					)}
+					variant="fab"
+					aria-label="Add"
+					onClick={this.toggleModal('item')}
+				>
+					<AddIcon />
+				</Button>
+				<Button
+					className={[classes.fabAddBtn, classes.fabGroupAddBtn].join(
+						' '
+					)}
 					variant="fab"
 					color="primary"
 					aria-label="Add"
-					onClick={this.toggleModal}
+					onClick={this.toggleModal()}
 				>
-					<AddIcon />
+					<PlaylistAdd />
 				</Button>
 				<Modal
 					aria-labelledby="simple-modal-title"
 					aria-describedby="simple-modal-description"
 					open={showAddItemModal}
-					onClose={this.toggleModal}
+					onClose={this.toggleModal('item')}
 				>
 					<div className={classes.modal}>
 						<Typography variant="h6" gutterBottom>
 							Add new item
 						</Typography>
-						<Grid container spacing={24}>
-							<Grid item xs={12}>
-								<TextField
-									required
-									id="name"
-									name="name"
-									label="Name"newItemTitle
-									fullWidth
-									autoComplete="name"
-									inputRef={this.newItemName}
-								/>
-							</Grid>
-							<Grid item xs={12}>
-								<TextField
-									id="description"
-									name="description"
-									label="Description"
-									fullWidth
-									multiline
-									rows={5}
-									autoComplete="description"
-									inputRef={this.newItemDescription}
-								/>
-							</Grid>
-							<Grid item xs={12}>
-								<Button color="primary" onClick={this.saveItem}>
-									Save
-								</Button>
-								<Button
-									color="secondary"
-									onClick={this.toggleModal}
-								>
-									Cancel
-								</Button>
-							</Grid>
-						</Grid>
+						<TextField
+							required
+							label="Name"
+							fullWidth
+							autoComplete="name"
+							inputRef={this.newItemName}
+						/>
+						<TextField
+							required
+							label="Id"
+							fullWidth
+							autoComplete="id"
+							inputRef={this.newItemName}
+						/>
+						<TextField
+							label="Description"
+							fullWidth
+							multiline
+							rows={5}
+							autoComplete="description"
+							inputRef={this.newItemDescription}
+						/>
+						<Button color="primary" onClick={this.saveItem}>
+							Save
+						</Button>
+						<Button color="secondary" onClick={this.toggleModal}>
+							Cancel
+						</Button>
+					</div>
+				</Modal>
+				<Modal
+					aria-labelledby="simple-modal-title"
+					aria-describedby="simple-modal-description"
+					open={showAddGroupModal}
+					onClose={this.toggleModal()}
+				>
+					<div className={classes.modal}>
+						<Typography variant="h6" gutterBottom>
+							Add new group
+						</Typography>
+						<TextField
+							required
+							label="Name"
+							fullWidth
+							autoComplete="name"
+							inputRef={this.newItemName}
+						/>
+						<br />
+						<br />
+						<Autocomplete />
+						<br />
+						<TextField
+							label="Description"
+							fullWidth
+							multiline
+							rows={5}
+							autoComplete="description"
+							inputRef={this.newItemDescription}
+						/>
+						<Button color="primary" onClick={this.saveItem}>
+							Save
+						</Button>
+						<Button color="secondary" onClick={this.toggleModal}>
+							Cancel
+						</Button>
 					</div>
 				</Modal>
 
