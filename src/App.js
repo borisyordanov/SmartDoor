@@ -25,7 +25,8 @@ const styles = theme => ({
 	container: {
 		width: '100%',
 		maxWidth: 1400,
-		margin: '30px auto 0 auto'
+		margin: '30px auto 0 auto',
+		overflow: 'hidden'
 	},
 	modal: {
 		position: 'absolute',
@@ -39,8 +40,10 @@ const styles = theme => ({
 	},
 	fabAddBtn: {
 		margin: 0,
-
 		position: 'fixed'
+	},
+	grid: {
+		padding: theme.spacing.unit * 2
 	},
 	fabItemAddBtn: {
 		right: 80,
@@ -187,7 +190,7 @@ class App extends Component {
 					selectedMenuTab={selectedMenuTab}
 				/>
 				<div className={classes.container}>
-					<Grid container spacing={24} justify="center">
+					<Grid container spacing={16} className={classes.grid} justify="center">
 						{selectedMenuTab === 0
 							? itemList.map((item, i) => (
 									<Grid
