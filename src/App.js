@@ -8,11 +8,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import Header from './components/Header';
 import AddIcon from '@material-ui/icons/Add';
 import PlaylistAdd from '@material-ui/icons/PlaylistAdd';
-import Modal from '@material-ui/core/Modal';
-import Typography from '@material-ui/core/Typography';
-import TextField from '@material-ui/core/TextField';
 import green from '@material-ui/core/colors/green';
-import Autocomplete from './components/Autocomplete';
 import ItemList from './components/ItemList';
 import GroupList from './components/GroupList';
 import ItemModal from './components/ItemModal';
@@ -255,7 +251,6 @@ class App extends Component {
 
 		const selectedItem = this.getSelectedItem();
 		const selectedGroup = this.getSelectedGroup();
-		console.log(selectedGroup);
 		return (
 			<div className={classes.root}>
 				<Header
