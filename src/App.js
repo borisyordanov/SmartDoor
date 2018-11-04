@@ -15,6 +15,8 @@ import green from '@material-ui/core/colors/green';
 import Autocomplete from './components/Autocomplete';
 import ItemList from './components/ItemList';
 import GroupList from './components/GroupList';
+import ItemModal from './components/ItemModal';
+import GroupModal from './components/GroupModal';
 
 const styles = theme => ({
 	close: {
@@ -62,9 +64,11 @@ class App extends Component {
 	state = {
 		showSnackbar: false,
 		snackbarMsg: '',
-		showAddItemModal: false,
-		showAddGroupModal: false,
-		selectedMenuTab: 1,
+		selectedItemId: null,
+		selectedGroupId: null,
+		showItemModal: false,
+		showGroupModal: false,
+		selectedMenuTab: 0,
 		newItem: {
 			name: '',
 			description: ''
@@ -72,7 +76,7 @@ class App extends Component {
 		groupList: [
 			{
 				id: 1,
-				title: 'Group 1',
+				name: 'Group 1',
 				date: 1453766400000,
 				items: [
 					{ id: 1, name: 'Item 1' },
@@ -85,7 +89,7 @@ class App extends Component {
 			},
 			{
 				id: 2,
-				title: 'Group 2',
+				name: 'Group 2',
 				date: 1485388800000,
 				items: [
 					{ id: 1, name: 'Item 1' },
@@ -98,7 +102,7 @@ class App extends Component {
 			},
 			{
 				id: 3,
-				title: 'Group 3',
+				name: 'Group 3',
 				date: 1516924800000,
 				items: [
 					{ id: 1, name: 'Item 1' },
@@ -176,27 +180,66 @@ class App extends Component {
 	toggleModal = type => () => {
 		if (type === 'item') {
 			this.setState(state => ({
-				showAddItemModal: !state.showAddItemModal
+				showItemModal: !state.showItemModal
 			}));
 		} else {
 			this.setState(state => ({
-				showAddGroupModal: !state.showAddGroupModal
+				showGroupModal: !state.showGroupModal
 			}));
 		}
 	};
-	openGroup = groupId => () => {
-		console.log(groupId);
+	openItem = itemId => () => {
+		this.setState({
+			selectedItemId: itemId
+		});
+		this.toggleModal('item')();
 	};
-	saveItem = () => {
-		const groupList = this.state.groupList.slice();
-		groupList.push({
-			title: this.newItemName.current.value,
-			description: this.newItemDescription.current.value,
+	openGroup = groupId => () => {
+		this.setState({
+			selectedGroupId: groupId
+		});
+		this.toggleModal('group')();
+	};
+	getSelectedItem() {
+		const { itemList, selectedItemId } = this.state;
+		if (selectedItemId) {
+			const index = itemList.findIndex(
+				item => item.id === selectedItemId
+			);
+			return itemList[index];
+		}
+		return null;
+	}
+	getSelectedGroup() {
+		const { groupList, selectedGroupId } = this.state;
+		if (selectedGroupId) {
+			const index = groupList.findIndex(
+				group => group.id === selectedGroupId
+			);
+			return groupList[index];
+		}
+		return null;
+	}
+	saveGroup = data => {
+		console.log(data)
+		const newGroup = {
+			id: data.id,
+			name: data.name,
+			description: data.description,
+			items: [],
 			date: Date.now(),
 			img: 'https://via.placeholder.com/400x225'
-		});
+		};
+		const groupList = this.state.groupList.slice();
+		const index = groupList.findIndex(group => group.id === data.id);
+		if (index >= 0) {
+			groupList[index] = newGroup;
+		} else {
+			groupList.push(newGroup);
+		}
+		console.log(groupList);
 		this.setState({
-			showAddItemModal: false,
+			showItemModal: false,
 			groupList
 		});
 	};
@@ -207,11 +250,14 @@ class App extends Component {
 			groupList,
 			showSnackbar,
 			snackbarMsg,
-			showAddItemModal,
-			showAddGroupModal,
+			showItemModal,
+			showGroupModal,
 			selectedMenuTab
 		} = this.state;
 
+		const selectedItem = this.getSelectedItem();
+		const selectedGroup = this.getSelectedGroup();
+		console.log(selectedGroup);
 		return (
 			<div className={classes.root}>
 				<Header
@@ -233,6 +279,7 @@ class App extends Component {
 						) : (
 							<GroupList
 								groups={groupList}
+								openItem={this.openItem}
 								startScan={this.startScan}
 								pauseScan={this.pauseScan}
 								stopScan={this.stopScan}
@@ -261,83 +308,19 @@ class App extends Component {
 				>
 					<PlaylistAdd />
 				</Button>
-				<Modal
-					aria-labelledby="simple-modal-title"
-					aria-describedby="simple-modal-description"
-					open={showAddItemModal}
-					onClose={this.toggleModal('item')}
-				>
-					<div className={classes.modal}>
-						<Typography variant="h6" gutterBottom>
-							Add new item
-						</Typography>
-						<TextField
-							required
-							label="Name"
-							fullWidth
-							autoComplete="name"
-							inputRef={this.newItemName}
-						/>
-						<TextField
-							required
-							label="Id"
-							fullWidth
-							autoComplete="id"
-							inputRef={this.newItemName}
-						/>
-						<TextField
-							label="Description"
-							fullWidth
-							multiline
-							rows={5}
-							autoComplete="description"
-							inputRef={this.newItemDescription}
-						/>
-						<Button color="primary" onClick={this.saveItem}>
-							Save
-						</Button>
-						<Button color="secondary" onClick={this.toggleModal}>
-							Cancel
-						</Button>
-					</div>
-				</Modal>
-				<Modal
-					aria-labelledby="simple-modal-title"
-					aria-describedby="simple-modal-description"
-					open={showAddGroupModal}
-					onClose={this.toggleModal()}
-				>
-					<div className={classes.modal}>
-						<Typography variant="h6" gutterBottom>
-							Add new group
-						</Typography>
-						<TextField
-							required
-							label="Name"
-							fullWidth
-							autoComplete="name"
-							inputRef={this.newItemName}
-						/>
-						<br />
-						<br />
-						<Autocomplete />
-						<br />
-						<TextField
-							label="Description"
-							fullWidth
-							multiline
-							rows={5}
-							autoComplete="description"
-							inputRef={this.newItemDescription}
-						/>
-						<Button color="primary" onClick={this.saveItem}>
-							Save
-						</Button>
-						<Button color="secondary" onClick={this.toggleModal}>
-							Cancel
-						</Button>
-					</div>
-				</Modal>
+				<ItemModal
+					className={classes.modal}
+					toggleModal={this.toggleModal}
+					isOpen={showItemModal}
+					item={selectedItem}
+				/>
+				<GroupModal
+					className={classes.modal}
+					toggleModal={this.toggleModal}
+					isOpen={showGroupModal}
+					group={selectedGroup}
+					saveGroup={this.saveGroup}
+				/>
 
 				<Snackbar
 					anchorOrigin={{

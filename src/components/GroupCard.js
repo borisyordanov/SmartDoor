@@ -54,7 +54,7 @@ const styles = theme => ({
 	}
 });
 
-class ItemCard extends React.Component {
+class GroupCard extends React.Component {
 	state = {
 		isExpanded: false,
 		isPaused: false,
@@ -93,7 +93,7 @@ class ItemCard extends React.Component {
 	};
 
 	render() {
-		const { classes, details } = this.props;
+		const { classes, group, openItem } = this.props;
 		const { isExpanded, isPlaying, isPaused } = this.state;
 		let cardControls = null;
 
@@ -143,18 +143,18 @@ class ItemCard extends React.Component {
 							<MoreVertIcon />
 						</IconButton>
 					}
-					title={details.title}
-					subheader={new Date(details.date).toLocaleDateString(
+					title={group.name}
+					subheader={new Date(group.date).toLocaleDateString(
 						'en-GB'
 					)}
 				/>
 				<CardMedia
 					className={classes.media}
-					image={details.img}
+					image={group.img}
 					title="Contemplative Reptile"
 				/>
 				<CardContent>
-					<Typography component="p">{details.description}</Typography>
+					<Typography component="p">{group.description}</Typography>
 				</CardContent>
 				<CardActions className={classes.actions} disableActionSpacing>
 					{cardControls}
@@ -173,9 +173,10 @@ class ItemCard extends React.Component {
 					<CardContent>
 						<Typography paragraph>Items:</Typography>
 						<List>
-							{details.items.map(item => (
+							{group.items.map(item => (
 								<ListItem
-									key={`group-${details.id}-item-${item.id}`}
+									onClick={openItem(item.id)}
+									key={`group-${item.id}-item-${item.id}`}
 								>
 									<ListItemIcon>
 										<ForwardIcon />
@@ -191,10 +192,10 @@ class ItemCard extends React.Component {
 	}
 }
 
-ItemCard.propTypes = {
+GroupCard.propTypes = {
 	classes: PropTypes.object.isRequired,
 	theme: PropTypes.object.isRequired,
-	details: PropTypes.object.isRequired
+	group: PropTypes.object.isRequired
 };
 
-export default withStyles(styles, { withTheme: true })(ItemCard);
+export default withStyles(styles, { withTheme: true })(GroupCard);

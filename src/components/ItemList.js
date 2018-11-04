@@ -47,7 +47,9 @@ function ItemList(props) {
 								{item.group.name}
 							</TableCell>
 							<TableCell>
-								{new Date(item.date).toLocaleString()}
+								{new Date(item.date).toLocaleDateString(
+									'en-GB'
+								)}
 							</TableCell>
 							<TableCell>
 								{item.description.substr(
