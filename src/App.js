@@ -146,8 +146,6 @@ class App extends Component {
 			}
 		]
 	};
-	newItemTitle = React.createRef();
-	newItemDescription = React.createRef();
 
 	startScan = isUnpaused => {
 		this.setState(state => ({
@@ -221,7 +219,7 @@ class App extends Component {
 		return null;
 	}
 	saveGroup = data => {
-		console.log(data)
+		console.log(data);
 		const newGroup = {
 			id: data.id,
 			name: data.name,
@@ -272,17 +270,17 @@ class App extends Component {
 						justify="center"
 					>
 						{selectedMenuTab === 0 ? (
-							<ItemList
-								items={itemList}
-								openGroup={this.openGroup}
-							/>
-						) : (
 							<GroupList
 								groups={groupList}
 								openItem={this.openItem}
 								startScan={this.startScan}
 								pauseScan={this.pauseScan}
 								stopScan={this.stopScan}
+							/>
+						) : (
+							<ItemList
+								items={itemList}
+								openGroup={this.openGroup}
 							/>
 						)}
 					</Grid>
