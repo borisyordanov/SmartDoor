@@ -51,8 +51,8 @@ class Header extends Component {
 							onChange={handleNavMenuChange}
 							indicatorColor="secondary"
 						>
+							<Tab label="Groups"/>
 							<Tab label="Items" />
-							<Tab label="Groups" />
 						</Tabs>
 						{auth && (
 							<div>
