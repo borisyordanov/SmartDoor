@@ -6,7 +6,6 @@ import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Header from './components/Header';
-import ItemCard from './components/ItemCard';
 import AddIcon from '@material-ui/icons/Add';
 import PlaylistAdd from '@material-ui/icons/PlaylistAdd';
 import Modal from '@material-ui/core/Modal';
@@ -14,6 +13,8 @@ import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import green from '@material-ui/core/colors/green';
 import Autocomplete from './components/Autocomplete';
+import ItemList from './components/ItemList';
+import GroupList from './components/GroupList';
 
 const styles = theme => ({
 	close: {
@@ -63,29 +64,47 @@ class App extends Component {
 		snackbarMsg: '',
 		showAddItemModal: false,
 		showAddGroupModal: false,
-		selectedMenuTab: 0,
+		selectedMenuTab: 1,
 		newItem: {
 			name: '',
 			description: ''
 		},
 		groupList: [
 			{
+				id: 1,
 				title: 'Group 1',
 				date: 1453766400000,
+				items: [
+					{ id: 1, name: 'Item 1' },
+					{ id: 2, name: 'Item 2' },
+					{ id: 3, name: 'Item 3' }
+				],
 				img: 'https://via.placeholder.com/400x225',
 				description:
 					'Lorem ipsum dolor sit amet, id sit fugit oporteat perfecto. Putant ornatus usu cu, munere legimus explicari per no. Eum inani graece similique id, putant perpetua aliquando an eam. Quem solum id pro. Errem consequuntur id his.'
 			},
 			{
+				id: 2,
 				title: 'Group 2',
 				date: 1485388800000,
+				items: [
+					{ id: 1, name: 'Item 1' },
+					{ id: 2, name: 'Item 2' },
+					{ id: 3, name: 'Item 3' }
+				],
 				img: 'https://via.placeholder.com/400x225',
 				description:
 					'Lorem ipsum dolor sit amet, id sit fugit oporteat perfecto. Putant ornatus usu cu, munere legimus explicari per no. Eum inani graece similique id, putant perpetua aliquando an eam. Quem solum id pro. Errem consequuntur id his.'
 			},
 			{
+				id: 3,
 				title: 'Group 3',
 				date: 1516924800000,
+				items: [
+					{ id: 1, name: 'Item 1' },
+					{ id: 2, name: 'Item 2' },
+					{ id: 3, name: 'Item 3' }
+				],
 				img: 'https://via.placeholder.com/400x225',
 				description:
 					'Lorem ipsum dolor sit amet, id sit fugit oporteat perfecto. Putant ornatus usu cu, munere legimus explicari per no. Eum inani graece similique id, putant perpetua aliquando an eam. Quem solum id pro. Errem consequuntur id his.'
@@ -93,21 +112,29 @@ class App extends Component {
 		],
 		itemList: [
 			{
-				title: 'Item 1',
+				id: 1,
+				name: 'Item 1',
+				group: { id: 1, name: 'Group 1' },
 				date: 1453766400000,
+
 				img: 'https://via.placeholder.com/400x225',
 				description:
 					'Lorem ipsum dolor sit amet, id sit fugit oporteat perfecto. Putant ornatus usu cu, munere legimus explicari per no. Eum inani graece similique id, putant perpetua aliquando an eam. Quem solum id pro. Errem consequuntur id his.'
 			},
 			{
-				title: 'Item 2',
+				id: 2,
+				name: 'Item 2',
+				group: { id: 2, name: 'Group 2' },
 				date: 1485388800000,
+
 				img: 'https://via.placeholder.com/400x225',
 				description:
 					'Lorem ipsum dolor sit amet, id sit fugit oporteat perfecto. Putant ornatus usu cu, munere legimus explicari per no. Eum inani graece similique id, putant perpetua aliquando an eam. Quem solum id pro. Errem consequuntur id his.'
 			},
 			{
-				title: 'Item 3',
+				id: 3,
+				name: 'Item 3',
+				group: { id: 3, name: 'Group 3' },
 				date: 1516924800000,
 				img: 'https://via.placeholder.com/400x225',
 				description:
@@ -157,7 +184,9 @@ class App extends Component {
 			}));
 		}
 	};
-
+	openGroup = groupId => () => {
+		console.log(groupId);
+	};
 	saveItem = () => {
 		const groupList = this.state.groupList.slice();
 		groupList.push({
@@ -190,42 +219,25 @@ class App extends Component {
 					selectedMenuTab={selectedMenuTab}
 				/>
 				<div className={classes.container}>
-					<Grid container spacing={16} className={classes.grid} justify="center">
-						{selectedMenuTab === 0
-							? itemList.map((item, i) => (
-									<Grid
-										item
-										xs={12}
-										sm={6}
-										md={4}
-										lg={3}
-										key={`item-${i}`}
-									>
-										<ItemCard
-											details={item}
-											startScan={this.startScan}
-											pauseScan={this.pauseScan}
-											stopScan={this.stopScan}
-										/>
-									</Grid>
-							  ))
-							: groupList.map((item, i) => (
-									<Grid
-										item
-										xs={12}
-										sm={6}
-										md={4}
-										lg={3}
-										key={`item-${i}`}
-									>
-										<ItemCard
-											details={item}
-											startScan={this.startScan}
-											pauseScan={this.pauseScan}
-											stopScan={this.stopScan}
-										/>
-									</Grid>
-							  ))}
+					<Grid
+						container
+						spacing={16}
+						className={classes.grid}
+						justify="center"
+					>
+						{selectedMenuTab === 0 ? (
+							<ItemList
+								items={itemList}
+								openGroup={this.openGroup}
+							/>
+						) : (
+							<GroupList
+								groups={groupList}
+								startScan={this.startScan}
+								pauseScan={this.pauseScan}
+								stopScan={this.stopScan}
+							/>
+						)}
 					</Grid>
 				</div>
 				<Button
