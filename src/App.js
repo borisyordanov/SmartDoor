@@ -6,11 +6,13 @@ import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Header from './components/Header';
-import ItemCard from './components/ItemCard';
 import AddIcon from '@material-ui/icons/Add';
-import Modal from '@material-ui/core/Modal';
-import Typography from '@material-ui/core/Typography';
-import TextField from '@material-ui/core/TextField';
+import PlaylistAdd from '@material-ui/icons/PlaylistAdd';
+import green from '@material-ui/core/colors/green';
+import ItemList from './components/ItemList';
+import GroupList from './components/GroupList';
+import ItemModal from './components/ItemModal';
+import GroupModal from './components/GroupModal';
 
 const styles = theme => ({
 	close: {
@@ -22,7 +24,8 @@ const styles = theme => ({
 	container: {
 		width: '100%',
 		maxWidth: 1400,
-		margin: '30px auto 0 auto'
+		margin: '30px auto 0 auto',
+		overflow: 'hidden'
 	},
 	modal: {
 		position: 'absolute',
@@ -36,9 +39,20 @@ const styles = theme => ({
 	},
 	fabAddBtn: {
 		margin: 0,
-		right: 20,
-		bottom: 20,
 		position: 'fixed'
+	},
+	grid: {
+		padding: theme.spacing.unit * 2
+	},
+	fabItemAddBtn: {
+		right: 80,
+		bottom: 20,
+		backgroundColor: green[500],
+		color: 'white'
+	},
+	fabGroupAddBtn: {
+		right: 20,
+		bottom: 20
 	}
 });
 
@@ -46,28 +60,81 @@ class App extends Component {
 	state = {
 		showSnackbar: false,
 		snackbarMsg: '',
-		showAddItemModal: false,
+		selectedItemId: null,
+		selectedGroupId: null,
+		showItemModal: false,
+		showGroupModal: false,
+		selectedMenuTab: 0,
 		newItem: {
 			name: '',
 			description: ''
 		},
+		groupList: [
+			{
+				id: 1,
+				name: 'Group 1',
+				date: 1453766400000,
+				items: [
+					{ id: 1, name: 'Item 1' },
+					{ id: 2, name: 'Item 2' },
+					{ id: 3, name: 'Item 3' }
+				],
+				img: 'https://via.placeholder.com/400x225',
+				description:
+					'Lorem ipsum dolor sit amet, id sit fugit oporteat perfecto. Putant ornatus usu cu, munere legimus explicari per no. Eum inani graece similique id, putant perpetua aliquando an eam. Quem solum id pro. Errem consequuntur id his.'
+			},
+			{
+				id: 2,
+				name: 'Group 2',
+				date: 1485388800000,
+				items: [
+					{ id: 1, name: 'Item 1' },
+					{ id: 2, name: 'Item 2' },
+					{ id: 3, name: 'Item 3' }
+				],
+				img: 'https://via.placeholder.com/400x225',
+				description:
+					'Lorem ipsum dolor sit amet, id sit fugit oporteat perfecto. Putant ornatus usu cu, munere legimus explicari per no. Eum inani graece similique id, putant perpetua aliquando an eam. Quem solum id pro. Errem consequuntur id his.'
+			},
+			{
+				id: 3,
+				name: 'Group 3',
+				date: 1516924800000,
+				items: [
+					{ id: 1, name: 'Item 1' },
+					{ id: 2, name: 'Item 2' },
+					{ id: 3, name: 'Item 3' }
+				],
+				img: 'https://via.placeholder.com/400x225',
+				description:
+					'Lorem ipsum dolor sit amet, id sit fugit oporteat perfecto. Putant ornatus usu cu, munere legimus explicari per no. Eum inani graece similique id, putant perpetua aliquando an eam. Quem solum id pro. Errem consequuntur id his.'
+			}
+		],
 		itemList: [
 			{
-				title: 'Test 1',
+				id: 1,
+				name: 'Item 1',
+				group: { id: 1, name: 'Group 1' },
 				date: 1453766400000,
+
 				img: 'https://via.placeholder.com/400x225',
 				description:
 					'Lorem ipsum dolor sit amet, id sit fugit oporteat perfecto. Putant ornatus usu cu, munere legimus explicari per no. Eum inani graece similique id, putant perpetua aliquando an eam. Quem solum id pro. Errem consequuntur id his.'
 			},
 			{
-				title: 'Test 2',
+				id: 2,
+				name: 'Item 2',
+				group: { id: 2, name: 'Group 2' },
 				date: 1485388800000,
+
 				img: 'https://via.placeholder.com/400x225',
 				description:
 					'Lorem ipsum dolor sit amet, id sit fugit oporteat perfecto. Putant ornatus usu cu, munere legimus explicari per no. Eum inani graece similique id, putant perpetua aliquando an eam. Quem solum id pro. Errem consequuntur id his.'
 			},
 			{
-				title: 'Test 3',
+				id: 3,
+				name: 'Item 3',
+				group: { id: 3, name: 'Group 3' },
 				date: 1516924800000,
 				img: 'https://via.placeholder.com/400x225',
 				description:
@@ -75,8 +142,6 @@ class App extends Component {
 			}
 		]
 	};
-	newItemTitle = React.createRef();
-	newItemDescription = React.createRef();
 
 	startScan = isUnpaused => {
 		this.setState(state => ({
@@ -103,106 +168,152 @@ class App extends Component {
 
 		this.setState({ showSnackbar: false, snackbarMsg: '' });
 	};
-
-	toggleModal = () => {
-		this.setState(state => ({ showAddItemModal: !state.showAddItemModal }));
+	handleNavMenuChange = (event, selectedMenuTab) => {
+		this.setState({ selectedMenuTab });
 	};
-
-	saveItem = () => {
-		const itemList = this.state.itemList.slice();
-		itemList.push({
-			title: this.newItemName.current.value,
-			description: this.newItemDescription.current.value,
+	toggleModal = type => () => {
+		if (type === 'item') {
+			this.setState(state => ({
+				showItemModal: !state.showItemModal
+			}));
+		} else {
+			this.setState(state => ({
+				showGroupModal: !state.showGroupModal
+			}));
+		}
+	};
+	openItem = itemId => () => {
+		this.setState({
+			selectedItemId: itemId
+		});
+		this.toggleModal('item')();
+	};
+	openGroup = groupId => () => {
+		this.setState({
+			selectedGroupId: groupId
+		});
+		this.toggleModal('group')();
+	};
+	getSelectedItem() {
+		const { itemList, selectedItemId } = this.state;
+		if (selectedItemId) {
+			const index = itemList.findIndex(
+				item => item.id === selectedItemId
+			);
+			return itemList[index];
+		}
+		return null;
+	}
+	getSelectedGroup() {
+		const { groupList, selectedGroupId } = this.state;
+		if (selectedGroupId) {
+			const index = groupList.findIndex(
+				group => group.id === selectedGroupId
+			);
+			return groupList[index];
+		}
+		return null;
+	}
+	saveGroup = data => {
+		console.log(data);
+		const newGroup = {
+			id: data.id,
+			name: data.name,
+			description: data.description,
+			items: [],
 			date: Date.now(),
 			img: 'https://via.placeholder.com/400x225'
-		});
+		};
+		const groupList = this.state.groupList.slice();
+		const index = groupList.findIndex(group => group.id === data.id);
+		if (index >= 0) {
+			groupList[index] = newGroup;
+		} else {
+			groupList.push(newGroup);
+		}
+		console.log(groupList);
 		this.setState({
-			showAddItemModal: false,
-			itemList
+			showItemModal: false,
+			groupList
 		});
 	};
 	render() {
 		const { classes } = this.props;
-		const { itemList, showSnackbar, snackbarMsg, showAddItemModal } = this.state;
+		const {
+			itemList,
+			groupList,
+			showSnackbar,
+			snackbarMsg,
+			showItemModal,
+			showGroupModal,
+			selectedMenuTab
+		} = this.state;
 
+		const selectedItem = this.getSelectedItem();
+		const selectedGroup = this.getSelectedGroup();
 		return (
 			<div className={classes.root}>
-				<Header />
+				<Header
+					handleNavMenuChange={this.handleNavMenuChange}
+					selectedMenuTab={selectedMenuTab}
+				/>
 				<div className={classes.container}>
 					<Grid
 						container
-						spacing={24}
+						spacing={16}
+						className={classes.grid}
 						justify="center"
 					>
-						{itemList.map((item, i) => (
-							<Grid item xs={12} sm={6} md={4} lg={3} key={`item-${i}`}>
-								<ItemCard
-									details={item}
-									startScan={this.startScan}
-									pauseScan={this.pauseScan}
-									stopScan={this.stopScan}
-								/>
-							</Grid>
-						))}
+						{selectedMenuTab === 0 ? (
+							<GroupList
+								groups={groupList}
+								openItem={this.openItem}
+								startScan={this.startScan}
+								pauseScan={this.pauseScan}
+								stopScan={this.stopScan}
+							/>
+						) : (
+							<ItemList
+								items={itemList}
+								openGroup={this.openGroup}
+							/>
+						)}
 					</Grid>
 				</div>
 				<Button
-					className={classes.fabAddBtn}
+					className={[classes.fabAddBtn, classes.fabItemAddBtn].join(
+						' '
+					)}
 					variant="fab"
-					color="primary"
 					aria-label="Add"
-					onClick={this.toggleModal}
+					onClick={this.toggleModal('item')}
 				>
 					<AddIcon />
 				</Button>
-				<Modal
-					aria-labelledby="simple-modal-title"
-					aria-describedby="simple-modal-description"
-					open={showAddItemModal}
-					onClose={this.toggleModal}
+				<Button
+					className={[classes.fabAddBtn, classes.fabGroupAddBtn].join(
+						' '
+					)}
+					variant="fab"
+					color="primary"
+					aria-label="Add"
+					onClick={this.toggleModal()}
 				>
-					<div className={classes.modal}>
-						<Typography variant="h6" gutterBottom>
-							Add new item
-						</Typography>
-						<Grid container spacing={24}>
-							<Grid item xs={12}>
-								<TextField
-									required
-									id="name"
-									name="name"
-									label="Name"newItemTitle
-									fullWidth
-									autoComplete="name"
-									inputRef={this.newItemName}
-								/>
-							</Grid>
-							<Grid item xs={12}>
-								<TextField
-									id="description"
-									name="description"
-									label="Description"
-									fullWidth
-									multiline
-									rows={5}
-									autoComplete="description"
-									inputRef={this.newItemDescription}
-								/>
-							</Grid>
-							<Grid item xs={12}>
-								<Button color="primary" onClick={this.saveItem}>
-									Save
-								</Button>
-								<Button
-									color="secondary"
-									onClick={this.toggleModal}
-								>
-									Cancel
-								</Button>
-							</Grid>
-						</Grid>
-					</div>
-				</Modal>
+					<PlaylistAdd />
+				</Button>
+				<ItemModal
+					className={classes.modal}
+					toggleModal={this.toggleModal}
+					isOpen={showItemModal}
+					item={selectedItem}
+				/>
+				<GroupModal
+					className={classes.modal}
+					toggleModal={this.toggleModal}
+					isOpen={showGroupModal}
+					group={selectedGroup}
+					saveGroup={this.saveGroup}
+				/>
 
 				<Snackbar
 					anchorOrigin={{
