@@ -13,6 +13,8 @@ import ItemList from './components/ItemList';
 import GroupList from './components/GroupList';
 import ItemModal from './components/ItemModal';
 import GroupModal from './components/GroupModal';
+import { getAllTags } from './services/tag';
+import { getAllGroups } from './services/group';
 
 const styles = theme => ({
 	close: {
@@ -65,84 +67,85 @@ class App extends Component {
 		showItemModal: false,
 		showGroupModal: false,
 		selectedMenuTab: 0,
-		newItem: {
-			name: '',
-			description: ''
-		},
 		groupList: [
 			{
 				id: 1,
 				name: 'Group 1',
-				date: 1453766400000,
-				items: [
-					{ id: 1, name: 'Item 1' },
-					{ id: 2, name: 'Item 2' },
-					{ id: 3, name: 'Item 3' }
-				],
-				img: 'https://via.placeholder.com/400x225',
-				description:
-					'Lorem ipsum dolor sit amet, id sit fugit oporteat perfecto. Putant ornatus usu cu, munere legimus explicari per no. Eum inani graece similique id, putant perpetua aliquando an eam. Quem solum id pro. Errem consequuntur id his.'
+				tags: [
+					{
+						id: 1,
+						name: 'Item 1',
+						code: 123
+					}
+				]
 			},
 			{
 				id: 2,
 				name: 'Group 2',
-				date: 1485388800000,
-				items: [
-					{ id: 1, name: 'Item 1' },
-					{ id: 2, name: 'Item 2' },
-					{ id: 3, name: 'Item 3' }
-				],
-				img: 'https://via.placeholder.com/400x225',
-				description:
-					'Lorem ipsum dolor sit amet, id sit fugit oporteat perfecto. Putant ornatus usu cu, munere legimus explicari per no. Eum inani graece similique id, putant perpetua aliquando an eam. Quem solum id pro. Errem consequuntur id his.'
+				tags: [
+					{
+						id: 1,
+						name: 'Item 1',
+						code: 123
+					},
+					{
+						id: 2,
+						name: 'Item 2',
+						code: 123
+					}
+				]
 			},
 			{
 				id: 3,
 				name: 'Group 3',
-				date: 1516924800000,
-				items: [
-					{ id: 1, name: 'Item 1' },
-					{ id: 2, name: 'Item 2' },
-					{ id: 3, name: 'Item 3' }
-				],
-				img: 'https://via.placeholder.com/400x225',
-				description:
-					'Lorem ipsum dolor sit amet, id sit fugit oporteat perfecto. Putant ornatus usu cu, munere legimus explicari per no. Eum inani graece similique id, putant perpetua aliquando an eam. Quem solum id pro. Errem consequuntur id his.'
+				tags: [
+					{
+						id: 1,
+						name: 'Item 1',
+						code: 123
+					},
+					{
+						id: 2,
+						name: 'Item 2',
+						code: 123
+					},
+					{
+						id: 3,
+						name: 'Item 3',
+						code: 123
+					}
+				]
 			}
 		],
 		itemList: [
 			{
 				id: 1,
 				name: 'Item 1',
-				group: { id: 1, name: 'Group 1' },
-				date: 1453766400000,
-
-				img: 'https://via.placeholder.com/400x225',
-				description:
-					'Lorem ipsum dolor sit amet, id sit fugit oporteat perfecto. Putant ornatus usu cu, munere legimus explicari per no. Eum inani graece similique id, putant perpetua aliquando an eam. Quem solum id pro. Errem consequuntur id his.'
+				code: 123
 			},
 			{
 				id: 2,
 				name: 'Item 2',
-				group: { id: 2, name: 'Group 2' },
-				date: 1485388800000,
-
-				img: 'https://via.placeholder.com/400x225',
-				description:
-					'Lorem ipsum dolor sit amet, id sit fugit oporteat perfecto. Putant ornatus usu cu, munere legimus explicari per no. Eum inani graece similique id, putant perpetua aliquando an eam. Quem solum id pro. Errem consequuntur id his.'
+				code: 123
 			},
 			{
 				id: 3,
 				name: 'Item 3',
-				group: { id: 3, name: 'Group 3' },
-				date: 1516924800000,
-				img: 'https://via.placeholder.com/400x225',
-				description:
-					'Lorem ipsum dolor sit amet, id sit fugit oporteat perfecto. Putant ornatus usu cu, munere legimus explicari per no. Eum inani graece similique id, putant perpetua aliquando an eam. Quem solum id pro. Errem consequuntur id his.'
+				code: 123
 			}
 		]
 	};
 
+	async componentDidMount() {
+		const tags = await getAllTags();
+		const groups = await getAllGroups();
+		console.log(tags);
+		console.log(groups);
+		this.setState({
+			itemList: tags,
+			groupList: groups
+		});
+	}
 	startScan = isUnpaused => {
 		this.setState(state => ({
 			showSnackbar: true,

@@ -31,32 +31,14 @@ function ItemList(props) {
 				<TableHead>
 					<TableRow>
 						<TableCell>Name</TableCell>
-						<TableCell>Group</TableCell>
-						<TableCell>Created At</TableCell>
-						<TableCell>Description</TableCell>
+						<TableCell>Code</TableCell>
 					</TableRow>
 				</TableHead>
 				<TableBody>
 					{items.map(item => (
 						<TableRow key={item.id}>
 							<TableCell>{item.name}</TableCell>
-							<TableCell
-								className={classes.groupCell}
-								onClick={openGroup(item.group.id)}
-							>
-								{item.group.name}
-							</TableCell>
-							<TableCell>
-								{new Date(item.date).toLocaleDateString(
-									'en-GB'
-								)}
-							</TableCell>
-							<TableCell>
-								{item.description.substr(
-									0,
-									item.description.length / 2
-								) + '...'}
-							</TableCell>
+							<TableCell>{item.code}</TableCell>
 						</TableRow>
 					))}
 				</TableBody>
