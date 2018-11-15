@@ -23,6 +23,10 @@ class App extends Component {
 		this.setState({ selectedMenuTab });
 	};
 
+	handleAuthenticationChange = (event, authenticated) => {
+		this.setState({ authenticated });
+	}
+
 	render() {
 		const { classes } = this.props;
 		const { selectedMenuTab, isAuthenticated } = this.state;
