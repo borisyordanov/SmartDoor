@@ -37,8 +37,17 @@ class Login extends React.Component {
         });
     }
 
-    handleSubmit(event) {
-        login(this.state.username, this.state.password);
+    async handleSubmit(event) {
+        try {
+            let result = await login(this.state.username, this.state.password);
+            if (result.status === 200) {
+                console.log('Successfully logged in');
+                // Notify main app logic of success
+            }
+        } catch (e) {
+            console.log(e);
+        }
+        
         event.preventDefault();
     }
 

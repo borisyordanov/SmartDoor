@@ -37,8 +37,17 @@ class Register extends React.Component {
         });
     }
 
-    handleSubmit(event) {
-        register(this.state.username, this.state.password);
+    async handleSubmit(event) {
+        try {
+            let result = await register(this.state.username, this.state.password);
+            if (result.status === 200) {
+                console.log('Successfully registered');
+                // Notify main app logic of success
+            }
+        } catch (e) {
+            console.log(e);
+        }
+        
         event.preventDefault();
     }
 
