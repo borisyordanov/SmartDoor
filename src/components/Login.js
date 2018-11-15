@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
@@ -11,20 +11,68 @@ const styles = theme => ({
     input: {
       display: 'none',
     },
+    textField: {
+        marginLeft: theme.spacing.unit,
+        marginRight: theme.spacing.unit,
+        width: 200,
+      }
 })
 
-function Login(props) {
-    return (
-        <div>
-            <TextField id='username' autoFocus={true} placeholder='Username' type='text' />
-            <br/>
-            <TextField id='password' placeholder='Password' type='password' />
-            <br/>
-            <Button variant='contained' className={props.button} onClick={(event) => login(Math.random().toString(36).substring(4,16), 'password') }>
-                Login
-            </Button>
-        </div>
-    );
+class Login extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = { 
+            username: '', 
+            password: '' 
+        };
+
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    handleChange(name, event) {
+        this.setState({
+            [name]: event.target.value
+        });
+    }
+
+    handleSubmit(event) {
+        login(this.state.username, this.state.password);
+        event.preventDefault();
+    }
+
+    render() {
+        const { classes } = this.props;
+
+        return (
+            <div>
+                <TextField 
+                    id='username'
+                    className={classes.TextField}
+                    autoFocus={true} 
+                    placeholder='Username' 
+                    type='text'
+                    onChange={(e) => this.handleChange('username', e)}
+                />
+                <br/>
+                <TextField 
+                    id='password' 
+                    className={classes.TextField}
+                    placeholder='Password' 
+                    type='password' 
+                    onChange={(e) => this.handleChange('password', e)}
+                />
+                <br/>
+                <Button 
+                    variant='contained' 
+                    className={classes.Button} 
+                    onClick={(event) => this.handleSubmit(event) } >
+                    Login
+                </Button>
+            </div>
+        );
+    }
 }
 
 export default withStyles(styles)(Login);
