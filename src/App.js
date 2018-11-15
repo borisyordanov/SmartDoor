@@ -23,9 +23,9 @@ class App extends Component {
 		this.setState({ selectedMenuTab });
 	};
 
-	handleAuthenticationChange = (event, authenticated) => {
+	handleAuthenticationChange = authenticated => {
 		this.setState({ authenticated });
-	}
+	};
 
 	render() {
 		const { classes } = this.props;
@@ -55,8 +55,26 @@ class App extends Component {
 							<Main selectedMenuTab={selectedMenuTab} />
 						)}
 					/> */}
-					<Route path="/login" component={Login} />
-					<Route path="/register" component={Register} />
+					<Route
+						path="/login"
+						render={() => (
+							<Login
+								handleAuthenticationChange={
+									this.handleAuthenticationChange
+								}
+							/>
+						)}
+					/>
+					<Route
+						path="/register"
+						render={() => (
+							<Register
+								handleAuthenticationChange={
+									this.handleAuthenticationChange
+								}
+							/>
+						)}
+					/>
 				</div>
 			</Router>
 		);
