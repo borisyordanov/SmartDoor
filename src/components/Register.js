@@ -1,7 +1,8 @@
 import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
+import Grid from '@material-ui/core/Grid';
+import { withStyles } from '@material-ui/core/styles';
 import { register } from '../services/auth';
 
 const styles = theme => ({
@@ -55,30 +56,42 @@ class Register extends React.Component {
         const { classes } = this.props;
 
         return (
-            <div>
-                <TextField 
-                    id='username'
-                    className={classes.TextField}
-                    autoFocus={true} 
-                    placeholder='Username' 
-                    type='text'
-                    onChange={(e) => this.handleChange('username', e)}
-                />
-                <br/>
-                <TextField 
-                    id='password' 
-                    className={classes.TextField}
-                    placeholder='Password' 
-                    type='password' 
-                    onChange={(e) => this.handleChange('password', e)}
-                />
-                <br/>
-                <Button 
-                    variant='contained' 
-                    className={classes.Button} 
-                    onClick={(event) => this.handleSubmit(event) } >
-                    Register
-                </Button>
+            <div className={classes.root}>
+                <Grid 
+                container
+                direction='column'
+                justify='center'
+                alignItems='center'
+                spacing={24}
+                >
+                    <Grid item xs={12}>
+                        <TextField 
+                            id='username'
+                            className={classes.TextField}
+                            autoFocus={true} 
+                            placeholder='Username' 
+                            type='text'
+                            onChange={(e) => this.handleChange('username', e)}
+                        />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <TextField 
+                            id='password' 
+                            className={classes.TextField}
+                            placeholder='Password' 
+                            type='password' 
+                            onChange={(e) => this.handleChange('password', e)}
+                        />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Button 
+                            variant='contained' 
+                            className={classes.Button} 
+                            onClick={(event) => this.handleSubmit(event) } >
+                            Register
+                        </Button>
+                    </Grid>
+                </Grid>
             </div>
         );
     }
