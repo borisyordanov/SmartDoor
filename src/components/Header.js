@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -36,22 +37,29 @@ class Header extends Component {
 		this.setState({ anchorEl: null });
 	};
 	render() {
-		const { classes, selectedMenuTab, handleNavMenuChange } = this.props;
+		const {
+			classes,
+			selectedMenuTab,
+			handleNavMenuChange,
+			handleLogout
+		} = this.props;
 		const { auth, anchorEl } = this.state;
 		const open = Boolean(anchorEl);
 		return (
 			<div className={classes.root}>
 				<AppBar position="static">
 					<Toolbar className={classes.toolbar}>
-						<Typography variant="h6" color="inherit" noWrap>
-							SmartDoor
-						</Typography>
+						<Link to="/">
+							<Typography variant="h6" color="secondary" noWrap>
+								SmartDoor
+							</Typography>
+						</Link>
 						<Tabs
 							value={selectedMenuTab}
 							onChange={handleNavMenuChange}
 							indicatorColor="secondary"
 						>
-							<Tab label="Groups"/>
+							<Tab label="Groups" />
 							<Tab label="Items" />
 						</Tabs>
 						{auth && (
@@ -80,10 +88,18 @@ class Header extends Component {
 									onClose={this.handleClose}
 								>
 									<MenuItem onClick={this.handleClose}>
-										Profile
+										<Link to="/login">Login</Link>
 									</MenuItem>
 									<MenuItem onClick={this.handleClose}>
-										My account
+										<Link to="/register">Register</Link>
+									</MenuItem>
+									<MenuItem
+										onClick={() => {
+											this.handleClose();
+											handleLogout();
+										}}
+									>
+										Logout
 									</MenuItem>
 								</Menu>
 							</div>
