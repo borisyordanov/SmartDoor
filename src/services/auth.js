@@ -1,33 +1,21 @@
-import axios from "axios";
+import axios from 'axios';
 
-// API auth calls
+const register = (username, password) =>
+	axios
+		.post('http://localhost:8080/api/user/register', {
+			username,
+			password
+		})
+		.then(response => response)
+		.catch(error => error);
 
-export function register(username, password) {
-    return axios.post('http://localhost:8080/api/user/register', {
-        username: username,
-        password: password
-    })
-    .then(function (response) {
-        console.log(response);
-        return response;
-    })
-    .catch(function (error) {
-        console.log(error);
-        return error;
-    });
-}
+const login = (username, password) =>
+	axios
+		.post('http://localhost:8080/api/user/login', {
+			username,
+			password
+		})
+		.then(response => response)
+		.catch(error => error);
 
-export function login(username, password) {
-    return axios.post('http://localhost:8080/api/user/login', {
-        username: username,
-        password: password
-    })
-    .then(function (response) {
-        console.log(response);
-        return response;
-    })
-    .catch(function (error) {
-        console.log(error);
-        return error;
-    });
-}
+export { login, register };

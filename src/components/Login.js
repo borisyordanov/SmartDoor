@@ -1,25 +1,32 @@
 import React from 'react';
-import { withRouter } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/core/styles';
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import Typography from '@material-ui/core/Typography';
+import { Redirect } from 'react-router';
+
 import { login } from '../services/auth';
 
 const styles = theme => ({
 	root: {
-		flexGrow: 1
+		display: 'flex',
+		justifyContent: 'center',
+		alignItems: 'center',
+		height: 'calc(100vh - 64px)'
 	},
-	button: {
-		margin: theme.spacing.unit
-	},
-	input: {
-		display: 'none'
+	error: { color: 'red' },
+	cardActions: {
+		paddingRight: 24,
+		paddingBottom: 24,
+		paddingLeft: 24,
+		justifyContent: 'flex-end'
 	},
 	textField: {
-		marginLeft: theme.spacing.unit,
-		marginRight: theme.spacing.unit,
-		width: '100%'
+		marginBottom: 20
 	}
 });
 
@@ -29,7 +36,8 @@ class Login extends React.Component {
 
 		this.state = {
 			username: '',
-			password: ''
+			password: '',
+			error: ''
 		};
 
 		this.handleChange = this.handleChange.bind(this);
@@ -42,69 +50,85 @@ class Login extends React.Component {
 		});
 	}
 
-	async handleSubmit(event) {
+	handleError(error) {
+		this.setState({
+			error
+		});
+	}
+
+	async handleSubmit() {
 		try {
 			const result = await login(
 				this.state.username,
 				this.state.password
 			);
 			if (result.status === 200) {
-				console.log('Successfully logged in');
-				// Notify main app logic of success
-				this.props.handleAuthenticationChange(true);
-				// this.props.history.push('/');
+				this.props.handleLogin();
+				return;
 			}
+			this.handleError('Oops! Something went wrong :(');
 		} catch (e) {
-			console.log(e);
+			this.handleError('Oops! Something went wrong :(');
 		}
-
-		event.preventDefault();
 	}
 
 	render() {
-		const { classes } = this.props;
+		const { classes, isAuthenticated } = this.props;
+		const { error } = this.state;
+
+		if (isAuthenticated) {
+			return <Redirect to="/" />;
+		}
 
 		return (
 			<div className={classes.root}>
-				<Grid
-					container
-					direction="column"
-					justify="center"
-					alignItems="center"
-					spacing={24}
-				>
-					<Grid item xs={12}>
-						<TextField
-							id="username"
-							className={classes.textField}
-							autoFocus={true}
-							placeholder="Username"
-							type="text"
-							onChange={e => this.handleChange('username', e)}
-						/>
-					</Grid>
-					<Grid item xs={12}>
-						<TextField
-							id="password"
-							className={classes.textField}
-							placeholder="Password"
-							type="password"
-							onChange={e => this.handleChange('password', e)}
-						/>
-					</Grid>
-					<Grid item xs={12}>
+				<Card>
+					<CardContent>
+						<form noValidate autoComplete="off">
+							<Typography variant="h4" gutterBottom>
+								Login
+							</Typography>
+							<TextField
+								fullWidth
+								className={classes.textField}
+								label="Username"
+								type="text"
+								onChange={e => this.handleChange('username', e)}
+							/>
+							<TextField
+								fullWidth
+								className={classes.textField}
+								label="Password"
+								type="password"
+								onChange={e => this.handleChange('password', e)}
+							/>
+							{error && (
+								<Typography
+									variant="body1"
+									className={classes.error}
+									gutterBottom
+								>
+									{error}
+								</Typography>
+							)}
+						</form>
+					</CardContent>
+					<CardActions className={classes.cardActions}>
+						<Link to="/register">
+							<Button>Register instead?</Button>
+						</Link>
 						<Button
 							variant="contained"
-							className={classes.Button}
-							onClick={event => this.handleSubmit(event)}
+							color="primary"
+							onClick={this.handleSubmit}
 						>
 							Login
 						</Button>
-					</Grid>
-				</Grid>
+					</CardActions>
+				</Card>
 			</div>
 		);
 	}
 }
 
-export default withRouter(withStyles(styles)(Login));
+export default withStyles(styles)(Login);

@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { Redirect, Route, Switch } from 'react-router';
+import { BrowserRouter as Router } from 'react-router-dom';
 import Header from './components/Header';
 import Main from './components/Main';
-import PrivateRoute from './components/PrivateRoute';
 import Login from './components/Login';
 import Register from './components/Register';
 
@@ -19,62 +19,68 @@ class App extends Component {
 		isAuthenticated: false
 	};
 
-	handleNavMenuChange = (event, selectedMenuTab) => {
-		this.setState({ selectedMenuTab });
-	};
+	handleLogin = this.handleLogin.bind(this);
+	handleLogout = this.handleLogout.bind(this);
+	handleNavMenuChange = this.handleNavMenuChange.bind(this);
 
-	handleAuthenticationChange = authenticated => {
-		this.setState({ authenticated });
-	};
+	handleNavMenuChange(event, selectedMenuTab) {
+		this.setState({ selectedMenuTab });
+	}
+
+	handleLogin() {
+		this.setState({ isAuthenticated: true });
+	}
+
+	handleLogout() {
+		this.setState({ isAuthenticated: false });
+	}
 
 	render() {
 		const { classes } = this.props;
 		const { selectedMenuTab, isAuthenticated } = this.state;
-
 		return (
 			<Router>
 				<div>
 					<div className={classes.root}>
 						<Header
-							handleNavMenuChange={this.handleNavMenuChange}
+							handleLogout={this.handleLogout}
 							selectedMenuTab={selectedMenuTab}
+							handleNavMenuChange={this.handleNavMenuChange}
 						/>
 					</div>
-					<PrivateRoute
-						path="/"
-						exact
-						authenticated={isAuthenticated}
-						render={() => (
-							<Main selectedMenuTab={selectedMenuTab} />
-						)}
-					/>
-					{/* Comment out the private route and enable the one below to access the main part of the app */}
-					{/* <Route
-						path="/"
-						render={() => (
-							<Main selectedMenuTab={selectedMenuTab} />
-						)}
-					/> */}
-					<Route
-						path="/login"
-						render={() => (
-							<Login
-								handleAuthenticationChange={
-									this.handleAuthenticationChange
-								}
-							/>
-						)}
-					/>
-					<Route
-						path="/register"
-						render={() => (
-							<Register
-								handleAuthenticationChange={
-									this.handleAuthenticationChange
-								}
-							/>
-						)}
-					/>
+					<Switch>
+						<Route
+							path="/"
+							exact
+							component={() =>
+								isAuthenticated ? (
+									<Main selectedMenuTab={selectedMenuTab} />
+								) : (
+									<Redirect to="/login" />
+								)
+							}
+						/>
+
+						<Route
+							path="/login"
+							render={() => (
+								<Login
+									isAuthenticated={isAuthenticated}
+									handleLogin={this.handleLogin}
+								/>
+							)}
+						/>
+						
+						<Route
+							path="/register"
+							render={() => (
+								<Register
+									isAuthenticated={isAuthenticated}
+									handleLogin={this.handleLogin}
+								/>
+							)}
+						/>
+					</Switch>
 				</div>
 			</Router>
 		);
