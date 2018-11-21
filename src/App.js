@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import Main from './components/Main';
+import { Redirect, Route, Switch } from 'react-router';
+import { BrowserRouter as Router } from 'react-router-dom';
 import Header from './components/Header';
+import Main from './components/Main';
+import Login from './components/Login';
+import Register from './components/Register';
 
 const styles = theme => ({
 	root: {
@@ -11,25 +15,74 @@ const styles = theme => ({
 
 class App extends Component {
 	state = {
-		selectedMenuTab: 0
+		selectedMenuTab: 0,
+		isAuthenticated: false
 	};
 
-	handleNavMenuChange = (event, selectedMenuTab) => {
+	handleLogin = this.handleLogin.bind(this);
+	handleLogout = this.handleLogout.bind(this);
+	handleNavMenuChange = this.handleNavMenuChange.bind(this);
+
+	handleNavMenuChange(event, selectedMenuTab) {
 		this.setState({ selectedMenuTab });
-	};
+	}
+
+	handleLogin() {
+		this.setState({ isAuthenticated: true });
+	}
+
+	handleLogout() {
+		this.setState({ isAuthenticated: false });
+	}
 
 	render() {
 		const { classes } = this.props;
-		const { selectedMenuTab } = this.state;
-
+		const { selectedMenuTab, isAuthenticated } = this.state;
 		return (
-			<div className={classes.root}>
-				<Header
-					handleNavMenuChange={this.handleNavMenuChange}
-					selectedMenuTab={selectedMenuTab}
-				/>
-				<Main />
-			</div>
+			<Router>
+				<div>
+					<div className={classes.root}>
+						<Header
+							handleLogout={this.handleLogout}
+							selectedMenuTab={selectedMenuTab}
+							handleNavMenuChange={this.handleNavMenuChange}
+						/>
+					</div>
+					<Switch>
+						<Route
+							path="/"
+							exact
+							component={() =>
+								isAuthenticated ? (
+									<Main selectedMenuTab={selectedMenuTab} />
+								) : (
+									<Redirect to="/login" />
+								)
+							}
+						/>
+
+						<Route
+							path="/login"
+							render={() => (
+								<Login
+									isAuthenticated={isAuthenticated}
+									handleLogin={this.handleLogin}
+								/>
+							)}
+						/>
+						
+						<Route
+							path="/register"
+							render={() => (
+								<Register
+									isAuthenticated={isAuthenticated}
+									handleLogin={this.handleLogin}
+								/>
+							)}
+						/>
+					</Switch>
+				</div>
+			</Router>
 		);
 	}
 }
