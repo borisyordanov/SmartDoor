@@ -14,6 +14,7 @@ const styles = theme => ({
 		marginTop: theme.spacing.unit * 3,
 		overflowX: 'auto'
 	},
+	row: { cursor: 'pointer' },
 	table: {
 		minWidth: 700
 	},
@@ -22,21 +23,29 @@ const styles = theme => ({
 	}
 });
 
-function ItemList(props) {
-	const { classes, items, openGroup } = props;
-
+const TagList = props => {
+	const { classes, items, openItem } = props;
+	console.log(items);
+	
 	return (
 		<Paper className={classes.root}>
 			<Table className={classes.table}>
 				<TableHead>
 					<TableRow>
+						<TableCell></TableCell>
 						<TableCell>Name</TableCell>
 						<TableCell>Code</TableCell>
 					</TableRow>
 				</TableHead>
 				<TableBody>
-					{items.map(item => (
-						<TableRow key={item.id}>
+					{items.map((item, index) => (
+						<TableRow
+							hover
+							key={item.id}
+							className={classes.row}
+							onClick={openItem(item.id)}
+						>
+							<TableCell>{index}</TableCell>
 							<TableCell>{item.name}</TableCell>
 							<TableCell>{item.code}</TableCell>
 						</TableRow>
@@ -45,10 +54,10 @@ function ItemList(props) {
 			</Table>
 		</Paper>
 	);
-}
+};
 
-ItemList.propTypes = {
+TagList.propTypes = {
 	classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(ItemList);
+export default withStyles(styles)(TagList);

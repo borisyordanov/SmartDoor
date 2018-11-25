@@ -1,14 +1,24 @@
-const getAllTags = () =>
-	fetch('http://localhost:3001/tag')
-		.then(response => response.json())
-		.then(data => data);
+import axios from 'axios';
 
-const getTagDetails = id =>
-	fetch('http://localhost:3001/tag/' + id)
+const getAllTags = () =>
+	fetch('http://localhost:8080/api/tags')
 		.then(response => response.json())
-		.then(data => data)
-		.catch(err => {
-			console.warn('getTagDetails', err);
-			return err;
-		});
-export { getAllTags, getTagDetails };
+		.then(data =>
+			data.map(tag => {
+				tag.id = tag._id;
+				delete tag._id;
+				return tag;
+			})
+		)
+		.catch(error => error);
+
+const updateTag = tag =>
+	axios
+		.post('http://localhost:8080/api/edit', {
+			id: tag.id,
+			name: tag.name
+		})
+		.then(response => response)
+		.catch(error => error);
+
+export { getAllTags, updateTag };

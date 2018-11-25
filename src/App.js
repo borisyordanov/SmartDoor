@@ -15,8 +15,8 @@ const styles = theme => ({
 
 class App extends Component {
 	state = {
-		selectedMenuTab: 0,
-		isAuthenticated: false
+		selectedMenuTab: 1,
+		isAuthenticated: true
 	};
 
 	handleLogin = this.handleLogin.bind(this);

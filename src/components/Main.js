@@ -8,10 +8,11 @@ import CloseIcon from '@material-ui/icons/Close';
 import AddIcon from '@material-ui/icons/Add';
 import PlaylistAdd from '@material-ui/icons/PlaylistAdd';
 import green from '@material-ui/core/colors/green';
-import ItemList from './ItemList';
+import TagList from './TagList';
 import GroupList from './GroupList';
-import ItemModal from './ItemModal';
+import TagModal from './TagModal';
 import GroupModal from './GroupModal';
+import Loader from './Loader';
 import { getAllTags } from '../services/tag';
 import { getAllGroups } from '../services/group';
 
@@ -33,6 +34,7 @@ const styles = theme => ({
 		top: '50%',
 		left: '50%',
 		transform: 'translate(-50%, -50%)',
+		height: 'min-content',
 		width: theme.spacing.unit * 50,
 		backgroundColor: theme.palette.background.paper,
 		boxShadow: theme.shadows[5],
@@ -57,7 +59,7 @@ const styles = theme => ({
 	}
 });
 
-class App extends Component {
+class Main extends Component {
 	state = {
 		loading: false,
 		showSnackbar: false,
@@ -66,7 +68,6 @@ class App extends Component {
 		selectedGroupId: null,
 		showItemModal: false,
 		showGroupModal: false,
-		selectedMenuTab: 0,
 		groupList: [
 			{
 				id: 1,
@@ -117,7 +118,7 @@ class App extends Component {
 				]
 			}
 		],
-		itemList: [
+		tagList: [
 			{
 				id: 1,
 				name: 'Item 1',
@@ -136,38 +137,67 @@ class App extends Component {
 		]
 	};
 
+	reloadTags = this.reloadTags.bind(this);
+	reloadGroups = this.reloadGroups.bind(this);
+
 	async componentDidMount() {
 		this.setState({
 			loading: true
 		});
+
+		if (this.props.selectedMenuTab) {
+			this.reloadTags();
+			return;
+		}
+		this.reloadGroups();
+	}
+
+	async reloadTags() {
+		this.setState({
+			loading: true
+		});
 		const tags = await getAllTags();
-		const groups = await getAllGroups();
 		console.log(tags);
+		this.setState({
+			tagList: tags,
+			loading: false,
+			showItemModal: false
+		});
+	}
+
+	async reloadGroups() {
+		this.setState({
+			loading: true
+		});
+		const groups = await getAllGroups();
 		console.log(groups);
 		this.setState({
-			itemList: tags,
 			groupList: groups,
 			loading: false
 		});
 	}
+
 	startScan = isUnpaused => {
 		this.setState(state => ({
 			showSnackbar: true,
 			snackbarMsg: isUnpaused ? 'Scan continued' : 'Scan started'
 		}));
 	};
+
 	pauseScan = () => {
 		this.setState(state => ({
 			showSnackbar: true,
 			snackbarMsg: 'Scan paused'
 		}));
 	};
+
 	stopScan = () => {
 		this.setState(state => ({
 			showSnackbar: true,
 			snackbarMsg: 'Scan stopped'
 		}));
 	};
+
 	handleSnackbarClose = (event, reason) => {
 		if (reason === 'clickaway') {
 			return;
@@ -175,39 +205,42 @@ class App extends Component {
 
 		this.setState({ showSnackbar: false, snackbarMsg: '' });
 	};
+
 	toggleModal = type => () => {
 		if (type === 'item') {
 			this.setState(state => ({
 				showItemModal: !state.showItemModal
 			}));
-		} else {
-			this.setState(state => ({
-				showGroupModal: !state.showGroupModal
-			}));
+			return;
 		}
+		this.setState(state => ({
+			showGroupModal: !state.showGroupModal
+		}));
 	};
+
 	openItem = itemId => () => {
 		this.setState({
 			selectedItemId: itemId
 		});
 		this.toggleModal('item')();
 	};
+
 	openGroup = groupId => () => {
 		this.setState({
 			selectedGroupId: groupId
 		});
 		this.toggleModal('group')();
 	};
+
 	getSelectedItem() {
-		const { itemList, selectedItemId } = this.state;
+		const { tagList, selectedItemId } = this.state;
 		if (selectedItemId) {
-			const index = itemList.findIndex(
-				item => item.id === selectedItemId
-			);
-			return itemList[index];
+			const index = tagList.findIndex(item => item.id === selectedItemId);
+			return tagList[index];
 		}
 		return null;
 	}
+
 	getSelectedGroup() {
 		const { groupList, selectedGroupId } = this.state;
 		if (selectedGroupId) {
@@ -218,6 +251,7 @@ class App extends Component {
 		}
 		return null;
 	}
+
 	saveGroup = data => {
 		console.log(data);
 		const newGroup = {
@@ -241,24 +275,24 @@ class App extends Component {
 			groupList
 		});
 	};
+
 	render() {
-		const { classes } = this.props;
+		const { classes, selectedMenuTab } = this.props;
 		const {
 			loading,
-			itemList,
+			tagList,
 			groupList,
 			showSnackbar,
 			snackbarMsg,
 			showItemModal,
-			showGroupModal,
-			selectedMenuTab
+			showGroupModal
 		} = this.state;
 
 		const selectedItem = this.getSelectedItem();
 		const selectedGroup = this.getSelectedGroup();
-
+		console.log(showItemModal);
 		if (loading) {
-			return 'Loading...';
+			return <Loader />;
 		}
 		return (
 			<div className={classes.root}>
@@ -272,16 +306,13 @@ class App extends Component {
 						{selectedMenuTab === 0 ? (
 							<GroupList
 								groups={groupList}
-								openItem={this.openItem}
+								openGroup={this.openGroup}
 								startScan={this.startScan}
 								pauseScan={this.pauseScan}
 								stopScan={this.stopScan}
 							/>
 						) : (
-							<ItemList
-								items={itemList}
-								openGroup={this.openGroup}
-							/>
+							<TagList items={tagList} openItem={this.openItem} />
 						)}
 					</Grid>
 				</div>
@@ -306,8 +337,9 @@ class App extends Component {
 				>
 					<PlaylistAdd />
 				</Button>
-				<ItemModal
+				<TagModal
 					className={classes.modal}
+					reloadTags={this.reloadTags}
 					toggleModal={this.toggleModal}
 					isOpen={showItemModal}
 					item={selectedItem}
@@ -349,4 +381,4 @@ class App extends Component {
 	}
 }
 
-export default withStyles(styles)(App);
+export default withStyles(styles)(Main);
