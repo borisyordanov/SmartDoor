@@ -1,12 +1,9 @@
 import React, { Component } from 'react';
-import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Modal from '@material-ui/core/Modal';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from './Autocomplete';
-
-const styles = theme => ({});
 
 class GroupModal extends Component {
 	state = {
@@ -96,4 +93,4 @@ class GroupModal extends Component {
 	}
 }
 
-export default withStyles(styles)(GroupModal);
+export default GroupModal;

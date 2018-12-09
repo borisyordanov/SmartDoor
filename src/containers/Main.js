@@ -8,11 +8,13 @@ import CloseIcon from '@material-ui/icons/Close';
 import AddIcon from '@material-ui/icons/Add';
 import PlaylistAdd from '@material-ui/icons/PlaylistAdd';
 import green from '@material-ui/core/colors/green';
-import TagList from './TagList';
-import GroupList from './GroupList';
-import TagModal from './TagModal';
-import GroupModal from './GroupModal';
-import Loader from './Loader';
+
+import TagList from '../components/TagList';
+import GroupList from '../components/GroupList';
+import TagModal from '../components/TagModal';
+import GroupModal from '../components/GroupModal';
+import Loader from '../components/Loader';
+
 import { getAllTags } from '../services/tag';
 import { getAllGroups } from '../services/group';
 
@@ -177,27 +179,6 @@ class Main extends Component {
 		});
 	}
 
-	startScan = isUnpaused => {
-		this.setState(state => ({
-			showSnackbar: true,
-			snackbarMsg: isUnpaused ? 'Scan continued' : 'Scan started'
-		}));
-	};
-
-	pauseScan = () => {
-		this.setState(state => ({
-			showSnackbar: true,
-			snackbarMsg: 'Scan paused'
-		}));
-	};
-
-	stopScan = () => {
-		this.setState(state => ({
-			showSnackbar: true,
-			snackbarMsg: 'Scan stopped'
-		}));
-	};
-
 	handleSnackbarClose = (event, reason) => {
 		if (reason === 'clickaway') {
 			return;
@@ -290,10 +271,11 @@ class Main extends Component {
 
 		const selectedItem = this.getSelectedItem();
 		const selectedGroup = this.getSelectedGroup();
-		console.log(showItemModal);
+
 		if (loading) {
 			return <Loader />;
 		}
+
 		return (
 			<div className={classes.root}>
 				<div className={classes.container}>
@@ -316,6 +298,7 @@ class Main extends Component {
 						)}
 					</Grid>
 				</div>
+				
 				<Button
 					className={[classes.fabAddBtn, classes.fabItemAddBtn].join(
 						' '
@@ -337,6 +320,7 @@ class Main extends Component {
 				>
 					<PlaylistAdd />
 				</Button>
+
 				<TagModal
 					className={classes.modal}
 					reloadTags={this.reloadTags}
@@ -360,9 +344,6 @@ class Main extends Component {
 					open={showSnackbar}
 					autoHideDuration={6000}
 					onClose={this.handleSnackbarClose}
-					ContentProps={{
-						'aria-describedby': 'message-id'
-					}}
 					message={snackbarMsg}
 					action={[
 						<IconButton

@@ -1,5 +1,3 @@
-import { getTagDetails } from './tag';
-
 const getAllGroups = () =>
 	fetch('http://localhost:3001/group')
 		.then(response => response.json())

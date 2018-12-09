@@ -1,17 +1,10 @@
 import React, { Component } from 'react';
-import { withStyles } from '@material-ui/core/styles';
 import { Redirect, Route, Switch } from 'react-router';
 import { BrowserRouter as Router } from 'react-router-dom';
+import Main from './containers/Main';
 import Header from './components/Header';
-import Main from './components/Main';
 import Login from './components/Login';
 import Register from './components/Register';
-
-const styles = theme => ({
-	root: {
-		flexGrow: 1
-	}
-});
 
 class App extends Component {
 	state = {
@@ -36,18 +29,15 @@ class App extends Component {
 	}
 
 	render() {
-		const { classes } = this.props;
 		const { selectedMenuTab, isAuthenticated } = this.state;
 		return (
 			<Router>
-				<div>
-					<div className={classes.root}>
-						<Header
-							handleLogout={this.handleLogout}
-							selectedMenuTab={selectedMenuTab}
-							handleNavMenuChange={this.handleNavMenuChange}
-						/>
-					</div>
+				<>
+					<Header
+						handleLogout={this.handleLogout}
+						selectedMenuTab={selectedMenuTab}
+						handleNavMenuChange={this.handleNavMenuChange}
+					/>
 					<Switch>
 						<Route
 							path="/"
@@ -70,7 +60,7 @@ class App extends Component {
 								/>
 							)}
 						/>
-						
+
 						<Route
 							path="/register"
 							render={() => (
@@ -81,10 +71,10 @@ class App extends Component {
 							)}
 						/>
 					</Switch>
-				</div>
+				</>
 			</Router>
 		);
 	}
 }
 
-export default withStyles(styles)(App);
+export default App;

@@ -17,9 +17,6 @@ const styles = theme => ({
 	row: { cursor: 'pointer' },
 	table: {
 		minWidth: 700
-	},
-	groupCell: {
-		cursor: 'pointer'
 	}
 });
 
