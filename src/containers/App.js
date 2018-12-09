@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { Redirect, Route, Switch } from 'react-router';
 import { BrowserRouter as Router } from 'react-router-dom';
-import Main from './containers/Main';
-import Header from './components/Header';
-import Login from './components/Login';
-import Register from './components/Register';
+import Main from './Main';
+import Header from '../components/Header';
+import Login from '../components/Login';
+import Register from '../components/Register';
 
 class App extends Component {
 	state = {
@@ -30,6 +30,24 @@ class App extends Component {
 
 	render() {
 		const { selectedMenuTab, isAuthenticated } = this.state;
+		const index = () =>
+			isAuthenticated ? (
+				<Main selectedMenuTab={selectedMenuTab} />
+			) : (
+				<Redirect to="/login" />
+			);
+		const login = () => (
+			<Login
+				isAuthenticated={isAuthenticated}
+				handleLogin={this.handleLogin}
+			/>
+		);
+		const register = () => (
+			<Register
+				isAuthenticated={isAuthenticated}
+				handleLogin={this.handleLogin}
+			/>
+		);
 		return (
 			<Router>
 				<>
@@ -39,37 +57,11 @@ class App extends Component {
 						handleNavMenuChange={this.handleNavMenuChange}
 					/>
 					<Switch>
-						<Route
-							path="/"
-							exact
-							component={() =>
-								isAuthenticated ? (
-									<Main selectedMenuTab={selectedMenuTab} />
-								) : (
-									<Redirect to="/login" />
-								)
-							}
-						/>
+						<Route path="/" exact component={index} />
 
-						<Route
-							path="/login"
-							render={() => (
-								<Login
-									isAuthenticated={isAuthenticated}
-									handleLogin={this.handleLogin}
-								/>
-							)}
-						/>
+						<Route path="/login" component={login} />
 
-						<Route
-							path="/register"
-							render={() => (
-								<Register
-									isAuthenticated={isAuthenticated}
-									handleLogin={this.handleLogin}
-								/>
-							)}
-						/>
+						<Route path="/register" component={register} />
 					</Switch>
 				</>
 			</Router>

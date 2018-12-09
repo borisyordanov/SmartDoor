@@ -23,19 +23,19 @@ const styles = theme => ({
 const TagList = props => {
 	const { classes, items, openItem } = props;
 	console.log(items);
-	
+
 	return (
 		<Paper className={classes.root}>
 			<Table className={classes.table}>
 				<TableHead>
 					<TableRow>
-						<TableCell></TableCell>
+						<TableCell />
 						<TableCell>Name</TableCell>
 						<TableCell>Code</TableCell>
 					</TableRow>
 				</TableHead>
 				<TableBody>
-					{items.map((item, index) => (
+					{items.map(item => (
 						<TableRow
 							hover
 							key={item.id}

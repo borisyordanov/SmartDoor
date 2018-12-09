@@ -142,12 +142,8 @@ class Main extends Component {
 	reloadTags = this.reloadTags.bind(this);
 	reloadGroups = this.reloadGroups.bind(this);
 
-	async componentDidMount() {
-		this.setState({
-			loading: true
-		});
-
-		if (this.props.selectedMenuTab) {
+	componentDidMount() {
+		if (this.props.selectedMenuTab === 1) {
 			this.reloadTags();
 			return;
 		}
@@ -155,28 +151,35 @@ class Main extends Component {
 	}
 
 	async reloadTags() {
-		this.setState({
-			loading: true
-		});
-		const tags = await getAllTags();
-		console.log(tags);
-		this.setState({
-			tagList: tags,
-			loading: false,
-			showItemModal: false
-		});
+		try {
+			this.setState({
+				loading: true
+			});
+			const tagsList = await getAllTags();
+			console.log(tagsList);
+			this.setState({
+				tagList,
+				loading: false
+			});
+		} catch (error) {
+			console.warn(error);
+		}
 	}
 
 	async reloadGroups() {
-		this.setState({
-			loading: true
-		});
-		const groups = await getAllGroups();
-		console.log(groups);
-		this.setState({
-			groupList: groups,
-			loading: false
-		});
+		try {
+			this.setState({
+				loading: true
+			});
+			const groupList = await getAllGroups();
+			console.log(groupList);
+			this.setState({
+				groupList,
+				loading: false
+			});
+		} catch (error) {
+			console.warn(error);
+		}
 	}
 
 	handleSnackbarClose = (event, reason) => {
@@ -298,7 +301,7 @@ class Main extends Component {
 						)}
 					</Grid>
 				</div>
-				
+
 				<Button
 					className={[classes.fabAddBtn, classes.fabItemAddBtn].join(
 						' '

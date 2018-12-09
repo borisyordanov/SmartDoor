@@ -36,8 +36,12 @@ class TagModal extends Component {
 	}
 
 	async saveItem() {
-		await updateTag({ id: this.props.item.id, name: this.state.name });
-		this.props.reloadTags();
+		try {
+			await updateTag({ id: this.props.item.id, name: this.state.name });
+			this.props.reloadTags();
+		} catch (error) {
+			console.warn(error);
+		}
 	}
 
 	render() {

@@ -1,8 +1,9 @@
 import axios from 'axios';
 
 const getAllTags = () =>
-	fetch('http://localhost:8080/api/tags')
-		.then(response => response.json())
+	axios
+		.get('http://localhost:8080/api/tags')
+		.then(response => response)
 		.then(data =>
 			data.map(tag => {
 				tag.id = tag._id;
