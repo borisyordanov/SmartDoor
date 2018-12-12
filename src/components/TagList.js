@@ -14,59 +14,47 @@ const styles = theme => ({
 		marginTop: theme.spacing.unit * 3,
 		overflowX: 'auto'
 	},
+	row: { cursor: 'pointer' },
 	table: {
 		minWidth: 700
-	},
-	groupCell: {
-		cursor: 'pointer'
 	}
 });
 
-function ItemList(props) {
-	const { classes, items, openGroup } = props;
+const TagList = props => {
+	const { classes, items, openItem } = props;
+	console.log(items);
 
 	return (
 		<Paper className={classes.root}>
 			<Table className={classes.table}>
 				<TableHead>
 					<TableRow>
+						<TableCell />
 						<TableCell>Name</TableCell>
-						<TableCell>Group</TableCell>
-						<TableCell>Created At</TableCell>
-						<TableCell>Description</TableCell>
+						<TableCell>Code</TableCell>
 					</TableRow>
 				</TableHead>
 				<TableBody>
 					{items.map(item => (
-						<TableRow key={item.id}>
+						<TableRow
+							hover
+							key={item.id}
+							className={classes.row}
+							onClick={openItem(item.id)}
+						>
+							<TableCell>{index}</TableCell>
 							<TableCell>{item.name}</TableCell>
-							<TableCell
-								className={classes.groupCell}
-								onClick={openGroup(item.group.id)}
-							>
-								{item.group.name}
-							</TableCell>
-							<TableCell>
-								{new Date(item.date).toLocaleDateString(
-									'en-GB'
-								)}
-							</TableCell>
-							<TableCell>
-								{item.description.substr(
-									0,
-									item.description.length / 2
-								) + '...'}
-							</TableCell>
+							<TableCell>{item.code}</TableCell>
 						</TableRow>
 					))}
 				</TableBody>
 			</Table>
 		</Paper>
 	);
-}
+};
 
-ItemList.propTypes = {
+TagList.propTypes = {
 	classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(ItemList);
+export default withStyles(styles)(TagList);

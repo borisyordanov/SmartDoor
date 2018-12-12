@@ -29,13 +29,14 @@ class Header extends Component {
 		anchorEl: null
 	};
 
-	handleMenu = event => {
+	handleMenuOpen = event => {
 		this.setState({ anchorEl: event.currentTarget });
 	};
 
 	handleClose = () => {
 		this.setState({ anchorEl: null });
 	};
+
 	render() {
 		const {
 			classes,
@@ -60,7 +61,7 @@ class Header extends Component {
 							indicatorColor="secondary"
 						>
 							<Tab label="Groups" />
-							<Tab label="Items" />
+							<Tab label="Tags" />
 						</Tabs>
 						{auth && (
 							<div>
@@ -68,7 +69,7 @@ class Header extends Component {
 									aria-owns={open ? 'menu-appbar' : null}
 									aria-haspopup="true"
 									className={classes.menuButton}
-									onClick={this.handleMenu}
+									onClick={this.handleMenuOpen}
 									color="inherit"
 								>
 									<AccountCircle />

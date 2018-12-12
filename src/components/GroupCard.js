@@ -4,10 +4,8 @@ import { withStyles } from '@material-ui/core/styles';
 import classnames from 'classnames';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
-import CardMedia from '@material-ui/core/CardMedia';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
-import Collapse from '@material-ui/core/Collapse';
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import List from '@material-ui/core/List';
@@ -93,10 +91,9 @@ class GroupCard extends React.Component {
 	};
 
 	render() {
-		const { classes, group, openItem } = this.props;
+		const { classes, group, openGroup } = this.props;
 		const { isExpanded, isPlaying, isPaused } = this.state;
 		let cardControls = null;
-
 		// console.log('isPlaying', isPlaying);
 		// console.log('isPaused', isPaused);
 
@@ -144,17 +141,33 @@ class GroupCard extends React.Component {
 						</IconButton>
 					}
 					title={group.name}
-					subheader={new Date(group.date).toLocaleDateString(
-						'en-GB'
-					)}
+					// subheader={new Date(group.date).toLocaleDateString(
+					// 	'en-GB'
+					// )}
 				/>
-				<CardMedia
+				{/* <CardMedia
 					className={classes.media}
 					image={group.img}
 					title="Contemplative Reptile"
 				/>
 				<CardContent>
 					<Typography component="p">{group.description}</Typography>
+				</CardContent> */}
+				<CardContent>
+					<Typography paragraph>Tags:</Typography>
+					<List>
+						{group.tags.map((tag, index) => (
+							<ListItem
+								onClick={openGroup(tag.id)}
+								key={`group-${group.id}-item-${index}`}
+							>
+								<ListItemIcon>
+									<ForwardIcon />
+								</ListItemIcon>
+								<ListItemText primary={tag.name} />
+							</ListItem>
+						))}
+					</List>
 				</CardContent>
 				<CardActions className={classes.actions} disableActionSpacing>
 					{cardControls}
@@ -169,24 +182,6 @@ class GroupCard extends React.Component {
 						<ExpandMoreIcon />
 					</IconButton>
 				</CardActions>
-				<Collapse in={isExpanded} timeout="auto" unmountOnExit>
-					<CardContent>
-						<Typography paragraph>Items:</Typography>
-						<List>
-							{group.items.map(item => (
-								<ListItem
-									onClick={openItem(item.id)}
-									key={`group-${item.id}-item-${item.id}`}
-								>
-									<ListItemIcon>
-										<ForwardIcon />
-									</ListItemIcon>
-									<ListItemText primary={item.name} />
-								</ListItem>
-							))}
-						</List>
-					</CardContent>
-				</Collapse>
 			</Card>
 		);
 	}

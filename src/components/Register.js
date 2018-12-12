@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Redirect } from 'react-router';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -112,6 +113,9 @@ class Register extends React.Component {
 						</form>
 					</CardContent>
 					<CardActions className={classes.cardActions}>
+						<Link to="/login">
+							<Button>Login instead?</Button>
+						</Link>
 						<Button
 							variant="contained"
 							color="primary"

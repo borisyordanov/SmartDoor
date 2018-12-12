@@ -8,10 +8,15 @@ import CloseIcon from '@material-ui/icons/Close';
 import AddIcon from '@material-ui/icons/Add';
 import PlaylistAdd from '@material-ui/icons/PlaylistAdd';
 import green from '@material-ui/core/colors/green';
-import ItemList from './ItemList';
-import GroupList from './GroupList';
-import ItemModal from './ItemModal';
-import GroupModal from './GroupModal';
+
+import TagList from '../components/TagList';
+import GroupList from '../components/GroupList';
+import TagModal from '../components/TagModal';
+import GroupModal from '../components/GroupModal';
+import Loader from '../components/Loader';
+
+import { getAllTags } from '../services/tag';
+import { getAllGroups } from '../services/group';
 
 const styles = theme => ({
 	close: {
@@ -31,6 +36,7 @@ const styles = theme => ({
 		top: '50%',
 		left: '50%',
 		transform: 'translate(-50%, -50%)',
+		height: 'min-content',
 		width: theme.spacing.unit * 50,
 		backgroundColor: theme.palette.background.paper,
 		boxShadow: theme.shadows[5],
@@ -55,110 +61,127 @@ const styles = theme => ({
 	}
 });
 
-class App extends Component {
+class Main extends Component {
 	state = {
+		loading: false,
 		showSnackbar: false,
 		snackbarMsg: '',
 		selectedItemId: null,
 		selectedGroupId: null,
 		showItemModal: false,
 		showGroupModal: false,
-		newItem: {
-			name: '',
-			description: ''
-		},
 		groupList: [
 			{
 				id: 1,
 				name: 'Group 1',
-				date: 1453766400000,
-				items: [
-					{ id: 1, name: 'Item 1' },
-					{ id: 2, name: 'Item 2' },
-					{ id: 3, name: 'Item 3' }
-				],
-				img: 'https://via.placeholder.com/400x225',
-				description:
-					'Lorem ipsum dolor sit amet, id sit fugit oporteat perfecto. Putant ornatus usu cu, munere legimus explicari per no. Eum inani graece similique id, putant perpetua aliquando an eam. Quem solum id pro. Errem consequuntur id his.'
+				tags: [
+					{
+						id: 1,
+						name: 'Item 1',
+						code: 123
+					}
+				]
 			},
 			{
 				id: 2,
 				name: 'Group 2',
-				date: 1485388800000,
-				items: [
-					{ id: 1, name: 'Item 1' },
-					{ id: 2, name: 'Item 2' },
-					{ id: 3, name: 'Item 3' }
-				],
-				img: 'https://via.placeholder.com/400x225',
-				description:
-					'Lorem ipsum dolor sit amet, id sit fugit oporteat perfecto. Putant ornatus usu cu, munere legimus explicari per no. Eum inani graece similique id, putant perpetua aliquando an eam. Quem solum id pro. Errem consequuntur id his.'
+				tags: [
+					{
+						id: 1,
+						name: 'Item 1',
+						code: 123
+					},
+					{
+						id: 2,
+						name: 'Item 2',
+						code: 123
+					}
+				]
 			},
 			{
 				id: 3,
 				name: 'Group 3',
-				date: 1516924800000,
-				items: [
-					{ id: 1, name: 'Item 1' },
-					{ id: 2, name: 'Item 2' },
-					{ id: 3, name: 'Item 3' }
-				],
-				img: 'https://via.placeholder.com/400x225',
-				description:
-					'Lorem ipsum dolor sit amet, id sit fugit oporteat perfecto. Putant ornatus usu cu, munere legimus explicari per no. Eum inani graece similique id, putant perpetua aliquando an eam. Quem solum id pro. Errem consequuntur id his.'
+				tags: [
+					{
+						id: 1,
+						name: 'Item 1',
+						code: 123
+					},
+					{
+						id: 2,
+						name: 'Item 2',
+						code: 123
+					},
+					{
+						id: 3,
+						name: 'Item 3',
+						code: 123
+					}
+				]
 			}
 		],
-		itemList: [
+		tagList: [
 			{
 				id: 1,
 				name: 'Item 1',
-				group: { id: 1, name: 'Group 1' },
-				date: 1453766400000,
-
-				img: 'https://via.placeholder.com/400x225',
-				description:
-					'Lorem ipsum dolor sit amet, id sit fugit oporteat perfecto. Putant ornatus usu cu, munere legimus explicari per no. Eum inani graece similique id, putant perpetua aliquando an eam. Quem solum id pro. Errem consequuntur id his.'
+				code: 123
 			},
 			{
 				id: 2,
 				name: 'Item 2',
-				group: { id: 2, name: 'Group 2' },
-				date: 1485388800000,
-
-				img: 'https://via.placeholder.com/400x225',
-				description:
-					'Lorem ipsum dolor sit amet, id sit fugit oporteat perfecto. Putant ornatus usu cu, munere legimus explicari per no. Eum inani graece similique id, putant perpetua aliquando an eam. Quem solum id pro. Errem consequuntur id his.'
+				code: 123
 			},
 			{
 				id: 3,
 				name: 'Item 3',
-				group: { id: 3, name: 'Group 3' },
-				date: 1516924800000,
-				img: 'https://via.placeholder.com/400x225',
-				description:
-					'Lorem ipsum dolor sit amet, id sit fugit oporteat perfecto. Putant ornatus usu cu, munere legimus explicari per no. Eum inani graece similique id, putant perpetua aliquando an eam. Quem solum id pro. Errem consequuntur id his.'
+				code: 123
 			}
 		]
 	};
 
-	startScan = isUnpaused => {
-		this.setState(state => ({
-			showSnackbar: true,
-			snackbarMsg: isUnpaused ? 'Scan continued' : 'Scan started'
-		}));
-	};
-	pauseScan = () => {
-		this.setState(state => ({
-			showSnackbar: true,
-			snackbarMsg: 'Scan paused'
-		}));
-	};
-	stopScan = () => {
-		this.setState(state => ({
-			showSnackbar: true,
-			snackbarMsg: 'Scan stopped'
-		}));
-	};
+	reloadTags = this.reloadTags.bind(this);
+	reloadGroups = this.reloadGroups.bind(this);
+
+	componentDidMount() {
+		if (this.props.selectedMenuTab === 1) {
+			this.reloadTags();
+			return;
+		}
+		this.reloadGroups();
+	}
+
+	async reloadTags() {
+		try {
+			this.setState({
+				loading: true
+			});
+			const tagsList = await getAllTags();
+			console.log(tagsList);
+			this.setState({
+				tagList,
+				loading: false
+			});
+		} catch (error) {
+			console.warn(error);
+		}
+	}
+
+	async reloadGroups() {
+		try {
+			this.setState({
+				loading: true
+			});
+			const groupList = await getAllGroups();
+			console.log(groupList);
+			this.setState({
+				groupList,
+				loading: false
+			});
+		} catch (error) {
+			console.warn(error);
+		}
+	}
+
 	handleSnackbarClose = (event, reason) => {
 		if (reason === 'clickaway') {
 			return;
@@ -166,39 +189,42 @@ class App extends Component {
 
 		this.setState({ showSnackbar: false, snackbarMsg: '' });
 	};
+
 	toggleModal = type => () => {
 		if (type === 'item') {
 			this.setState(state => ({
 				showItemModal: !state.showItemModal
 			}));
-		} else {
-			this.setState(state => ({
-				showGroupModal: !state.showGroupModal
-			}));
+			return;
 		}
+		this.setState(state => ({
+			showGroupModal: !state.showGroupModal
+		}));
 	};
+
 	openItem = itemId => () => {
 		this.setState({
 			selectedItemId: itemId
 		});
 		this.toggleModal('item')();
 	};
+
 	openGroup = groupId => () => {
 		this.setState({
 			selectedGroupId: groupId
 		});
 		this.toggleModal('group')();
 	};
+
 	getSelectedItem() {
-		const { itemList, selectedItemId } = this.state;
+		const { tagList, selectedItemId } = this.state;
 		if (selectedItemId) {
-			const index = itemList.findIndex(
-				item => item.id === selectedItemId
-			);
-			return itemList[index];
+			const index = tagList.findIndex(item => item.id === selectedItemId);
+			return tagList[index];
 		}
 		return null;
 	}
+
 	getSelectedGroup() {
 		const { groupList, selectedGroupId } = this.state;
 		if (selectedGroupId) {
@@ -209,6 +235,7 @@ class App extends Component {
 		}
 		return null;
 	}
+
 	saveGroup = data => {
 		console.log(data);
 		const newGroup = {
@@ -232,22 +259,28 @@ class App extends Component {
 			groupList
 		});
 	};
+
 	render() {
-		const { classes,selectedMenuTab } = this.props;
+		const { classes, selectedMenuTab } = this.props;
 		const {
-			itemList,
+			loading,
+			tagList,
 			groupList,
 			showSnackbar,
 			snackbarMsg,
 			showItemModal,
-			showGroupModal,
-			
+			showGroupModal
 		} = this.state;
 
 		const selectedItem = this.getSelectedItem();
 		const selectedGroup = this.getSelectedGroup();
+
+		if (loading) {
+			return <Loader />;
+		}
+
 		return (
-			<div>
+			<div className={classes.root}>
 				<div className={classes.container}>
 					<Grid
 						container
@@ -258,19 +291,17 @@ class App extends Component {
 						{selectedMenuTab === 0 ? (
 							<GroupList
 								groups={groupList}
-								openItem={this.openItem}
+								openGroup={this.openGroup}
 								startScan={this.startScan}
 								pauseScan={this.pauseScan}
 								stopScan={this.stopScan}
 							/>
 						) : (
-							<ItemList
-								items={itemList}
-								openGroup={this.openGroup}
-							/>
+							<TagList items={tagList} openItem={this.openItem} />
 						)}
 					</Grid>
 				</div>
+
 				<Button
 					className={[classes.fabAddBtn, classes.fabItemAddBtn].join(
 						' '
@@ -292,8 +323,10 @@ class App extends Component {
 				>
 					<PlaylistAdd />
 				</Button>
-				<ItemModal
+
+				<TagModal
 					className={classes.modal}
+					reloadTags={this.reloadTags}
 					toggleModal={this.toggleModal}
 					isOpen={showItemModal}
 					item={selectedItem}
@@ -314,9 +347,6 @@ class App extends Component {
 					open={showSnackbar}
 					autoHideDuration={6000}
 					onClose={this.handleSnackbarClose}
-					ContentProps={{
-						'aria-describedby': 'message-id'
-					}}
 					message={snackbarMsg}
 					action={[
 						<IconButton
@@ -335,4 +365,4 @@ class App extends Component {
 	}
 }
 
-export default withStyles(styles)(App);
+export default withStyles(styles)(Main);
