@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -22,8 +21,6 @@ const styles = theme => ({
 
 const TagList = props => {
 	const { classes, items, openItem } = props;
-	console.log(items);
-
 	return (
 		<Paper className={classes.root}>
 			<Table className={classes.table}>
@@ -31,30 +28,28 @@ const TagList = props => {
 					<TableRow>
 						<TableCell />
 						<TableCell>Name</TableCell>
-						<TableCell>Code</TableCell>
+						<TableCell>Tag</TableCell>
 					</TableRow>
 				</TableHead>
 				<TableBody>
-					{items.map(item => (
-						<TableRow
-							hover
-							key={item.id}
-							className={classes.row}
-							onClick={openItem(item.id)}
-						>
-							<TableCell>{index}</TableCell>
-							<TableCell>{item.name}</TableCell>
-							<TableCell>{item.code}</TableCell>
-						</TableRow>
-					))}
+					{items.length
+						? items.map((item, index) => (
+								<TableRow
+									hover
+									key={item.id}
+									className={classes.row}
+									onClick={openItem(item.id)}
+								>
+									<TableCell>{index}</TableCell>
+									<TableCell>{item.name}</TableCell>
+									<TableCell>{item.tag}</TableCell>
+								</TableRow>
+						  ))
+						: 'Oops! No tags found'}
 				</TableBody>
 			</Table>
 		</Paper>
 	);
-};
-
-TagList.propTypes = {
-	classes: PropTypes.object.isRequired
 };
 
 export default withStyles(styles)(TagList);

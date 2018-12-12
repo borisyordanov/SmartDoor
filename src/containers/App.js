@@ -9,7 +9,7 @@ import Register from '../components/Register';
 class App extends Component {
 	state = {
 		selectedMenuTab: 1,
-		isAuthenticated: true
+		isAuthenticated: false
 	};
 
 	handleLogin = this.handleLogin.bind(this);

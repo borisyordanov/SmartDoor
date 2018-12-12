@@ -14,7 +14,9 @@ class GroupModal extends Component {
 		description: '',
 		items: []
 	};
+	
 	saveGroup = this.saveGroup.bind(this);
+
 	componentWillReceiveProps(nextProps) {
 		if (nextProps.group) {
 			this.setState({

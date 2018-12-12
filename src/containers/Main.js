@@ -70,73 +70,8 @@ class Main extends Component {
 		selectedGroupId: null,
 		showItemModal: false,
 		showGroupModal: false,
-		groupList: [
-			{
-				id: 1,
-				name: 'Group 1',
-				tags: [
-					{
-						id: 1,
-						name: 'Item 1',
-						code: 123
-					}
-				]
-			},
-			{
-				id: 2,
-				name: 'Group 2',
-				tags: [
-					{
-						id: 1,
-						name: 'Item 1',
-						code: 123
-					},
-					{
-						id: 2,
-						name: 'Item 2',
-						code: 123
-					}
-				]
-			},
-			{
-				id: 3,
-				name: 'Group 3',
-				tags: [
-					{
-						id: 1,
-						name: 'Item 1',
-						code: 123
-					},
-					{
-						id: 2,
-						name: 'Item 2',
-						code: 123
-					},
-					{
-						id: 3,
-						name: 'Item 3',
-						code: 123
-					}
-				]
-			}
-		],
-		tagList: [
-			{
-				id: 1,
-				name: 'Item 1',
-				code: 123
-			},
-			{
-				id: 2,
-				name: 'Item 2',
-				code: 123
-			},
-			{
-				id: 3,
-				name: 'Item 3',
-				code: 123
-			}
-		]
+		groupList: [],
+		tagList: []
 	};
 
 	reloadTags = this.reloadTags.bind(this);
@@ -147,7 +82,8 @@ class Main extends Component {
 			this.reloadTags();
 			return;
 		}
-		this.reloadGroups();
+		// disabled until API supports groups
+		// this.reloadGroups();
 	}
 
 	async reloadTags() {
@@ -155,8 +91,8 @@ class Main extends Component {
 			this.setState({
 				loading: true
 			});
-			const tagsList = await getAllTags();
-			console.log(tagsList);
+			const tagList = await getAllTags();
+			console.log(tagList);
 			this.setState({
 				tagList,
 				loading: false
@@ -237,7 +173,6 @@ class Main extends Component {
 	}
 
 	saveGroup = data => {
-		console.log(data);
 		const newGroup = {
 			id: data.id,
 			name: data.name,
@@ -253,7 +188,6 @@ class Main extends Component {
 		} else {
 			groupList.push(newGroup);
 		}
-		console.log(groupList);
 		this.setState({
 			showItemModal: false,
 			groupList
