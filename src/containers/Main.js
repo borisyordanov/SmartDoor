@@ -9,7 +9,7 @@ import AddIcon from '@material-ui/icons/Add';
 import PlaylistAdd from '@material-ui/icons/PlaylistAdd';
 import green from '@material-ui/core/colors/green';
 
-import TagList from '../components/TagList';
+import TagList from '../components/TagList/TagList';
 import GroupList from '../components/GroupList';
 import TagModal from '../components/TagModal';
 import GroupModal from '../components/GroupModal';

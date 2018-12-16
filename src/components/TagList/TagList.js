@@ -32,20 +32,23 @@ const TagList = props => {
 					</TableRow>
 				</TableHead>
 				<TableBody>
-					{items.length
-						? items.map((item, index) => (
-								<TableRow
-									hover
-									key={item.id}
-									className={classes.row}
-									onClick={openItem(item.id)}
-								>
-									<TableCell>{index}</TableCell>
-									<TableCell>{item.name}</TableCell>
-									<TableCell>{item.tag}</TableCell>
-								</TableRow>
-						  ))
-						: 'Oops! No tags found'}
+					{items.length ? (
+						items.map((item, index) => (
+							<TableRow
+								hover
+								id="tag-row"
+								key={item.id}
+								className={classes.row}
+								onClick={openItem(item.id)}
+							>
+								<TableCell>{index}</TableCell>
+								<TableCell>{item.name}</TableCell>
+								<TableCell>{item.tag}</TableCell>
+							</TableRow>
+						))
+					) : (
+						<TableRow id="no-data-row">Oops! No tags found</TableRow>
+					)}
 				</TableBody>
 			</Table>
 		</Paper>
