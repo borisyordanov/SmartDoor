@@ -28,6 +28,7 @@ const TagList = props => {
 					<TableRow>
 						<TableCell />
 						<TableCell>Name</TableCell>
+						<TableCell>Description</TableCell>
 						<TableCell>Tag</TableCell>
 					</TableRow>
 				</TableHead>
@@ -43,6 +44,7 @@ const TagList = props => {
 							>
 								<TableCell>{index}</TableCell>
 								<TableCell>{item.name}</TableCell>
+								<TableCell>{item.description}</TableCell>
 								<TableCell>{item.tag}</TableCell>
 							</TableRow>
 						))

@@ -15,10 +15,10 @@ const styles = theme => ({
 });
 
 class TagModal extends Component {
-	saveName = this.saveName.bind(this);
 	saveItem = this.saveItem.bind(this);
 	state = {
-		name: ''
+		name: '',
+		description: ''
 	};
 
 	componentWillReceiveProps(nextProps) {
@@ -29,15 +29,19 @@ class TagModal extends Component {
 		}
 	}
 
-	saveName(e) {
+	saveInput = input => e => {
 		this.setState({
-			name: e.target.value
+			[input]: e.target.value
 		});
-	}
+	};
 
 	async saveItem() {
 		try {
-			await updateTag({ id: this.props.item.id, name: this.state.name });
+			await updateTag({
+				id: this.props.item.id,
+				description: this.state.description,
+				name: this.state.name
+			});
 			this.props.reloadTags();
 		} catch (error) {
 			console.warn(error);
@@ -46,7 +50,7 @@ class TagModal extends Component {
 
 	render() {
 		const { classes, isOpen, toggleModal, className } = this.props;
-		const { name } = this.state;
+		const { name, description } = this.state;
 
 		return (
 			<Modal
@@ -64,9 +68,16 @@ class TagModal extends Component {
 						label="Name"
 						fullWidth
 						margin="normal"
-						autoComplete="name"
-						onChange={this.saveName}
+						onChange={this.saveInput('name')}
 						value={name}
+					/>
+					<TextField
+						required
+						label="Description"
+						fullWidth
+						margin="normal"
+						onChange={this.saveInput('description')}
+						value={description}
 					/>
 					<br />
 					<br />
