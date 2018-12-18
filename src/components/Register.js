@@ -35,7 +35,7 @@ class Register extends React.Component {
 		super(props);
 
 		this.state = {
-			username: '',
+			email: '',
 			password: '',
 			error: ''
 		};
@@ -59,7 +59,7 @@ class Register extends React.Component {
 	async handleSubmit() {
 		try {
 			const result = await register(
-				this.state.username,
+				this.state.email,
 				this.state.password
 			);
 			if (result.status === 200) {
@@ -90,9 +90,9 @@ class Register extends React.Component {
 							<TextField
 								fullWidth
 								className={classes.textField}
-								label="Username"
+								label="Email"
 								type="text"
-								onChange={e => this.handleChange('username', e)}
+								onChange={e => this.handleChange('email', e)}
 							/>
 							<TextField
 								fullWidth

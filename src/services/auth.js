@@ -1,18 +1,18 @@
 import axios from 'axios';
 
-const register = (username, password) =>
+const register = (email, password) =>
 	axios
 		.post('http://localhost:8080/api/user/register', {
-			username,
+			email,
 			password
 		})
 		.then(response => response)
 		.catch(error => error);
 
-const login = (username, password) =>
+const login = (email, password) =>
 	axios
 		.post('http://localhost:8080/api/user/login', {
-			username,
+			email,
 			password
 		})
 		.then(response => response)
