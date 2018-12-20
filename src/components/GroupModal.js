@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import Modal from '@material-ui/core/Modal';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
-import Autocomplete from './Autocomplete';
 
-const styles = theme => ({});
+import Autocomplete from './Autocomplete';
 
 class GroupModal extends Component {
 	state = {
@@ -15,7 +14,9 @@ class GroupModal extends Component {
 		description: '',
 		items: []
 	};
+	
 	saveGroup = this.saveGroup.bind(this);
+
 	componentWillReceiveProps(nextProps) {
 		if (nextProps.group) {
 			this.setState({
@@ -96,4 +97,4 @@ class GroupModal extends Component {
 	}
 }
 
-export default withStyles(styles)(GroupModal);
+export default withStyles(GroupModal);

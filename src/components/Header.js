@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -9,6 +10,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
+
 const styles = {
 	root: {
 		flexGrow: 1
@@ -28,31 +30,39 @@ class Header extends Component {
 		anchorEl: null
 	};
 
-	handleMenu = event => {
+	handleMenuOpen = event => {
 		this.setState({ anchorEl: event.currentTarget });
 	};
 
 	handleClose = () => {
 		this.setState({ anchorEl: null });
 	};
+
 	render() {
-		const { classes, selectedMenuTab, handleNavMenuChange } = this.props;
+		const {
+			classes,
+			selectedMenuTab,
+			handleNavMenuChange,
+			handleLogout
+		} = this.props;
 		const { auth, anchorEl } = this.state;
 		const open = Boolean(anchorEl);
 		return (
 			<div className={classes.root}>
 				<AppBar position="static">
 					<Toolbar className={classes.toolbar}>
-						<Typography variant="h6" color="inherit" noWrap>
-							SmartDoor
-						</Typography>
+						<Link to="/">
+							<Typography variant="h6" color="secondary" noWrap>
+								SmartDoor
+							</Typography>
+						</Link>
 						<Tabs
 							value={selectedMenuTab}
 							onChange={handleNavMenuChange}
 							indicatorColor="secondary"
 						>
-							<Tab label="Groups"/>
-							<Tab label="Items" />
+							<Tab label="Groups" />
+							<Tab label="Tags" />
 						</Tabs>
 						{auth && (
 							<div>
@@ -60,7 +70,7 @@ class Header extends Component {
 									aria-owns={open ? 'menu-appbar' : null}
 									aria-haspopup="true"
 									className={classes.menuButton}
-									onClick={this.handleMenu}
+									onClick={this.handleMenuOpen}
 									color="inherit"
 								>
 									<AccountCircle />
@@ -80,10 +90,18 @@ class Header extends Component {
 									onClose={this.handleClose}
 								>
 									<MenuItem onClick={this.handleClose}>
-										Profile
+										<Link to="/login">Login</Link>
 									</MenuItem>
 									<MenuItem onClick={this.handleClose}>
-										My account
+										<Link to="/register">Register</Link>
+									</MenuItem>
+									<MenuItem
+										onClick={() => {
+											this.handleClose();
+											handleLogout();
+										}}
+									>
+										Logout
 									</MenuItem>
 								</Menu>
 							</div>

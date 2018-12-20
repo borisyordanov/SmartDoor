@@ -5,14 +5,22 @@ import Modal from '@material-ui/core/Modal';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 
-const styles = theme => ({});
+import { updateTag } from '../services/tag';
 
-class ItemModal extends Component {
+const styles = theme => ({
+	button: {
+		margin: theme.spacing.unit,
+		float: 'right'
+	}
+});
+
+class TagModal extends Component {
+	saveItem = this.saveItem.bind(this);
 	state = {
-		id: '',
 		name: '',
 		description: ''
 	};
+
 	componentWillReceiveProps(nextProps) {
 		if (nextProps.item) {
 			this.setState({
@@ -21,52 +29,72 @@ class ItemModal extends Component {
 		}
 	}
 
+	saveInput = input => e => {
+		this.setState({
+			[input]: e.target.value
+		});
+	};
+
+	async saveItem() {
+		try {
+			await updateTag({
+				id: this.props.item.id,
+				description: this.state.description,
+				name: this.state.name
+			});
+			this.props.reloadTags();
+		} catch (error) {
+			console.warn(error);
+		}
+	}
+
 	render() {
 		const { classes, isOpen, toggleModal, className } = this.props;
-		const { name, id, description } = this.state;
+		const { name, description } = this.state;
 
 		return (
 			<Modal
 				className={className}
 				hideBackdrop={true}
-				aria-labelledby="simple-modal-title"
-				aria-describedby="simple-modal-description"
 				open={isOpen}
 				onClose={toggleModal('item')}
 			>
 				<div className={classes.modal}>
 					<Typography variant="h6" gutterBottom>
-						Add new item
+						Edit tag
 					</Typography>
 					<TextField
 						required
 						label="Name"
 						fullWidth
 						margin="normal"
-						autoComplete="name"
+						onChange={this.saveInput('name')}
 						value={name}
 					/>
 					<TextField
 						required
-						label="Id"
-						fullWidth
-						margin="normal"
-						autoComplete="id"
-						value={id}
-					/>
-					<TextField
 						label="Description"
 						fullWidth
 						margin="normal"
-						multiline
-						rows={5}
-						autoComplete="description"
+						onChange={this.saveInput('description')}
 						value={description}
 					/>
-					<Button color="primary" onClick={this.saveItem}>
+					<br />
+					<br />
+					<Button
+						className={classes.button}
+						color="primary"
+						variant="contained"
+						onClick={this.saveItem}
+					>
 						Save
 					</Button>
-					<Button color="secondary" onClick={toggleModal('item')}>
+					<Button
+						className={classes.button}
+						color="secondary"
+						variant="contained"
+						onClick={toggleModal('item')}
+					>
 						Cancel
 					</Button>
 				</div>
@@ -75,4 +103,4 @@ class ItemModal extends Component {
 	}
 }
 
-export default withStyles(styles)(ItemModal);
+export default withStyles(styles)(TagModal);
